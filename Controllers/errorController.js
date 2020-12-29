@@ -78,7 +78,7 @@ module.exports = (err, request, response, next) => {
   if (process.env.NODE_ENV == 'production') {
     return response.status(err.statusCode).json({
       message: err.message,
-      status: err.status,
+      status: err.status, 
     });
   } //extra
 
