@@ -9,9 +9,11 @@ const {
   aliasTopTours,
   getTourStats,
   monthlyPlan,
+  
 } = require('../Controllers/tourController');
 const {
   protectRouteMiddleware,
+  restrictUser
 } = require('../Controllers/authenticationController');
 
 const router = express.Router();
@@ -21,5 +23,5 @@ router.route('/top-5-cheapest').get(aliasTopTours, getAllTours);
 router.route('/tour-stats').get(getTourStats);
 router.route('/monthly-plan/:year').get(monthlyPlan);
 router.route('/').get(protectRouteMiddleware, getAllTours).post(createTour); //chaining multiple middleware
-router.route('/:id').patch(updateTour).delete(deleteTour).get(getTourById);
+router.route('/:id').patch(updateTour).delete(protectRouteMiddleware , restrictUser('admin', 'lead-guide') ,deleteTour).get(getTourById);
 module.exports = router;

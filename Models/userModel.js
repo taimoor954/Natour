@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
   photo: {
     type: String,
   },
+  role : {
+    type : String,
+    enum : ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user'
+  },
+  
   password: {
     type: String,
     required: [true, 'Password is required'],
@@ -38,6 +44,7 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: {
     type: Date,
   },
+ 
 });
 
 //hash pass before saving doc

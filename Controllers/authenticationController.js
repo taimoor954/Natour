@@ -19,6 +19,7 @@ exports.signup = catchAsync(async (request, response, next) => {
     password: request.body.password,
     passwordConfirm: request.body.passwordConfirm,
     passwordChangedAt: request.body.passwordChangedAt,
+    role: request.body.role,
   });
   //payload, secretString, optinal callback m optional call back tells when jwt should expire
   const token = tokenGenerator(newUser._id);
@@ -120,3 +121,26 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
   request.user = freshUser
   next();
 });
+
+
+//tour cant be deleted by every user only admin can perform this type of operation
+//such operatoins are called AUTHORIZATION
+
+//if you want to pass an arg in middleware func which just pass response, request, next as a function then
+//create a wrapper function and spread all the args in it and then return the middleware func from it
+exports.restrictUser = (...roles)=> {
+  //roles ['admin', 'lead-guide']
+  //the way to check restriction is if you find anytbing else like user it wont be found in roles array so an error will be thrown
+  return (request, response, next) => {
+    //request.user=freshUser kay thru reqUser may sara data mil jayga like name email role wagrea
+    //jis waja say hum role check karsaktay hen
+    ///isay middleware say pehlay protect route middleware chalay ga 
+    //tabhi request.user milay ga
+    if(!roles.includes(request.user.role))
+    {
+      return next(new AppError('You do not have permisson to perform this actin', 403))
+    }
+    next()
+  }
+}
+
