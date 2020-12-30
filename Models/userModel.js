@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // const { validator } = require('validator');
 const userSchema = new mongoose.Schema({
@@ -18,12 +19,12 @@ const userSchema = new mongoose.Schema({
   photo: {
     type: String,
   },
-  role : {
-    type : String,
-    enum : ['user', 'guide', 'lead-guide', 'admin'],
-    default: 'user'
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user',
   },
-  
+
   password: {
     type: String,
     required: [true, 'Password is required'],
@@ -44,7 +45,13 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: {
     type: Date,
   },
- 
+  passwordResetToken: {
+    type: String,
+  },
+  //shows you have 10 mins to change your passwod otherwise your token will be expired
+  passwordResetTokenExpiresAt: {
+    type: Date,
+  },
 });
 
 //hash pass before saving doc
@@ -79,14 +86,31 @@ userSchema.methods.changePasswordAfter = async function (JWTTimeStamp) {
       10
     );
     // console.log(JWTTimeStamp, timeStampForPasswordChangedAt );
-    //false mean password not changed 
+    //false mean password not changed
     // console.log( JWTTimeStamp < timeStampForPasswordChangedAt)
-    return JWTTimeStamp < timeStampForPasswordChangedAt; 
-     //if jwtTimeStamp means token given at time of sign up < password changed after sign up is true  
-    
+    return JWTTimeStamp < timeStampForPasswordChangedAt;
+    //if jwtTimeStamp means token given at time of sign up < password changed after sign up is true
   }
 
-  return false //means password is not chnaged since the account hass been created 
+  return false; //means password is not chnaged since the account hass been created
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  //a simple 32 lengths random string
+  const resetToken = crypto.randomBytes(32).toString('hex'); //without enc
+  //above token should be encrypt (with not so heavy algo) and store it into db so that we cab compare it with
+  //token user provide
+
+  this.passwordResetToken = crypto //with enc
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetTokenExpiresAt = Date.now() + 10 * 60 * 1000; //10 mins
+  console.log(this.passwordResetToken)
+  console.log(`${resetToken} enc token`)
+  console.log(this.passwordResetTokenExpiresAt)
+  return resetToken; //non encrypted password will be returned to user 
+  //so that he can enter the token and the enc token stored in database will be compared with it
 };
 
 const User = mongoose.model('User', userSchema);
