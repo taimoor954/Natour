@@ -1,5 +1,6 @@
 //login password changing authention logout will happen here
 const { promisify } = require('util');
+const crypto = require('crypto');
 const { request, response } = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
@@ -8,6 +9,7 @@ const { User } = require('../Models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const { decode } = require('punycode');
 const { sendEmail } = require('../utils/email');
+const { nextTick } = require('process');
 
 exports.signup = catchAsync(async (request, response, next) => {
   // const newUser = await User.create(request.body);
@@ -182,27 +184,57 @@ exports.forgotPassword = catchAsync(async (request, response, next) => {
     // console.log(user.email)
     await sendEmail({
       email: user.email,
-      subject : 'Your password reset token (valid for 10 mins)',
-      message 
+      subject: 'Your password reset token (valid for 10 mins)',
+      message,
     });
     // console.log(o)
-  return response.status(200).json(
-    {
-      status : 200,
-      message: 'token send to mail'
-    }
-  )
+    return response.status(200).json({
+      status: 200,
+      message: 'token send to mail',
+    });
   } catch (error) {
     // console.log(error)
-    user.passwordResetToken = undefined
-    user.passwordResetTokenExpiresAt = undefined
-    await user.save({validateBeforeSave : false})
-    return next(new AppError("error in sendimg mail"), 500)
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpiresAt = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError('error in sendimg mail'), 500);
   }
-  
-
 });
 
-exports.resetPassword = (request, response, next) => {
-  next();
-};
+exports.resetPassword = catchAsync(async(request, response, next) => {
+  //GET USER ON BASIS OF TOKEN
+  console.log(request.params.randomToken)
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(request.params.randomToken)
+    .digest('hex');
+  // console.log(hashedToken)
+    // IF TOKEN NOT EXPIRED
+    const user = await User.findOne({passwordResetToken : hashedToken,
+       passwordResetTokenExpiresAt  : {$gt : Date.now()}})
+      // console.log(user)
+
+  //  THERE IS A USER , SET NEW PASSWORD
+      if(!user)
+      {
+        return next(new AppError('Token has been expired for reseting passwrd or user not found', 400))
+      }
+     
+      user.password = request.body.password
+      user.passwordConfirm = request.body.passwordConfirm
+      user.passwordResetTokenExpiresAt = undefined
+      user.passwordResetToken = undefined 
+      await user.save()
+      const token = tokenGenerator(user._id);
+      //UPDATE passwordChangedat FOR THE USER
+       
+  //LOG THE USER IN AND SEND JWT
+  return response.status(200).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+
+});
