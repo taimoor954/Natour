@@ -60,7 +60,7 @@ userSchema.pre('save', async function (next) {
   //  when email or other fields are modifier
   if (!this.isModified('password')) return next();
 
-  //hash pass with cost of 12
+  //hash pass with cost of 12 //jitna ziada hash cost utna ziada time taken and utna ziada enrypted
   this.password = await bcrypt.hash(this.password, 12);
   //delete pass comfirm field
   this.passwordConfirm = undefined;

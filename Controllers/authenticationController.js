@@ -11,6 +11,17 @@ const { decode } = require('punycode');
 const { sendEmail } = require('../utils/email');
 const { nextTick } = require('process');
 
+const createSendToken = (user, statusCode, response) => { //for login and sending token 
+  const token = tokenGenerator(user._id);
+  response.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signup = catchAsync(async (request, response, next) => {
   // const newUser = await User.create(request.body);
   //change due to security flaw because anyone can  register as admin here although he's not
@@ -25,15 +36,7 @@ exports.signup = catchAsync(async (request, response, next) => {
     role: request.body.role,
   });
   //payload, secretString, optinal callback m optional call back tells when jwt should expire
-  const token = tokenGenerator(newUser._id);
-
-  response.status(201).json({
-    status: 'Success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, response);
 });
 
 function tokenGenerator(id) {
@@ -69,14 +72,7 @@ exports.login = catchAsync(async (request, response, next) => {
   if (!user || !(await user.correctPassword(user.password, password))) {
     return next(new AppError('Incorrect email and pass', 401)); //401 means unauthorize
   }
-  const token = tokenGenerator(user._id);
-  response.status(200).json({
-    status: 'success',
-    token,
-    data: {
-      user,
-    },
-  });
+  createSendToken(user, 200, response);
 });
 
 exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
@@ -192,7 +188,9 @@ exports.forgotPassword = catchAsync(async (request, response, next) => {
     // console.log(error)
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpiresAt = undefined;
-    await user.save({ validateBeforeSave: false });
+    await user.save({
+      validateBeforeSave: false,
+    });
     return next(new AppError('error in sendimg mail'), 500);
   }
 });
@@ -207,7 +205,9 @@ exports.resetPassword = catchAsync(async (request, response, next) => {
   // IF TOKEN NOT EXPIRED //  THERE IS A USER , SET NEW PASSWORD
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetTokenExpiresAt: { $gt: Date.now() },
+    passwordResetTokenExpiresAt: {
+      $gt: Date.now(),
+    },
   });
   // console.log(user)
 
@@ -229,11 +229,25 @@ exports.resetPassword = catchAsync(async (request, response, next) => {
   //UPDATE passwordChangedat FOR THE USER  //for this we created a doc middleware in userModel
 
   //LOG THE USER IN AND SEND JWT
-  return response.status(200).json({
-    status: 'success',
-    token,
-    data: {
-      user,
-    },
-  });
+  createSendToken(user, 200, response);
+});
+
+exports.updatePassword = catchAsync(async (request, response, next) => {
+  //before updating password we wil ask for current pass as a security measure
+
+  //FIRST FETCH USER FROM COLLECTION
+  const user = await User.findById(request.user._id).select('+password');
+  //CHECK IF CURRENT POSTED PASSWORD IS CORRECT
+  if (
+    !(await user.correctPassword(user.password, request.body.passwordCurrent))
+  )
+    return next(new AppError('Current password is wrong', 401));
+
+  //IF CORRECT THEN UPDATE THE PASSWORD
+  user.password = request.body.password;
+  user.passwordConfirm = request.body.passwordConfirm;
+  await user.save();
+
+  //LOG USER AND SEND JWT
+  createSendToken(user, 200, response);
 });
