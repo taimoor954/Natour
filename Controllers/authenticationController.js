@@ -178,16 +178,12 @@ exports.forgotPassword = catchAsync(async (request, response, next) => {
   )}/api/v1/users/reset-password/${resetToken}`;
   const message = `Forgot your password? Submit a patch request with your new password
   and password confirm to : ${resetUrl}.\n if you know the pass then ignore the email`;
-  // next()
   try {
-    // console.log('workinG MAIL')
-    // console.log(user.email)
     await sendEmail({
       email: user.email,
       subject: 'Your password reset token (valid for 10 mins)',
       message,
     });
-    // console.log(o)
     return response.status(200).json({
       status: 200,
       message: 'token send to mail',
@@ -201,33 +197,37 @@ exports.forgotPassword = catchAsync(async (request, response, next) => {
   }
 });
 
-exports.resetPassword = catchAsync(async(request, response, next) => {
+exports.resetPassword = catchAsync(async (request, response, next) => {
   //GET USER ON BASIS OF TOKEN
-  console.log(request.params.randomToken)
+  console.log(request.params.randomToken);
   const hashedToken = crypto
     .createHash('sha256')
     .update(request.params.randomToken)
     .digest('hex');
-  // console.log(hashedToken)
-    // IF TOKEN NOT EXPIRED
-    const user = await User.findOne({passwordResetToken : hashedToken,
-       passwordResetTokenExpiresAt  : {$gt : Date.now()}})
-      // console.log(user)
+  // IF TOKEN NOT EXPIRED //  THERE IS A USER , SET NEW PASSWORD
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetTokenExpiresAt: { $gt: Date.now() },
+  });
+  // console.log(user)
 
-  //  THERE IS A USER , SET NEW PASSWORD
-      if(!user)
-      {
-        return next(new AppError('Token has been expired for reseting passwrd or user not found', 400))
-      }
-     
-      user.password = request.body.password
-      user.passwordConfirm = request.body.passwordConfirm
-      user.passwordResetTokenExpiresAt = undefined
-      user.passwordResetToken = undefined 
-      await user.save()
-      const token = tokenGenerator(user._id);
-      //UPDATE passwordChangedat FOR THE USER
-       
+  if (!user) {
+    return next(
+      new AppError(
+        'Token has been expired for reseting passwrd or user not found',
+        400
+      )
+    );
+  }
+
+  user.password = request.body.password;
+  user.passwordConfirm = request.body.passwordConfirm;
+  user.passwordResetTokenExpiresAt = undefined;
+  user.passwordResetToken = undefined;
+  await user.save();
+  const token = tokenGenerator(user._id);
+  //UPDATE passwordChangedat FOR THE USER  //for this we created a doc middleware in userModel
+
   //LOG THE USER IN AND SEND JWT
   return response.status(200).json({
     status: 'success',
@@ -236,5 +236,4 @@ exports.resetPassword = catchAsync(async(request, response, next) => {
       user,
     },
   });
-
 });

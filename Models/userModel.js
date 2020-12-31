@@ -69,7 +69,8 @@ userSchema.pre('save', async function (next) {
   //if the pass is modified only then encrypt dontt encrypt again and again
   //  when email or other fields are modifier
   if (!this.isModified('password')|| this.isNew) return next();
-  this.passwordChangedAt = Date.now() - 1000  
+  this.passwordChangedAt = Date.now() - 1000  //sometimes jwt pehlay ajata hai and password changed time baad may
+  //tou usay bachnay kay liye humnay date may 1s minus kardia (1000ms) just ha hack :)
   next()
 });
 
