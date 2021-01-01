@@ -52,7 +52,21 @@ const userSchema = new mongoose.Schema({
   passwordResetTokenExpiresAt: {
     type: Date,
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 });
+
+//find those users whos acetive property is true
+userSchema.pre(/^find/, function (next) {
+  this.find({
+    active: {$ne : false}
+  })
+  next()
+})
+
 
 //hash pass before saving doc
 userSchema.pre('save', async function (next) {
@@ -68,8 +82,8 @@ userSchema.pre('save', async function (next) {
 userSchema.pre('save', async function (next) {
   //if the pass is modified only then encrypt dontt encrypt again and again
   //  when email or other fields are modifier
-  if (!this.isModified('password')|| this.isNew) return next();
-  this.passwordChangedAt = Date.now() - 1000  //sometimes jwt pehlay ajata hai and password changed time baad may
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000 //sometimes jwt pehlay ajata hai and password changed time baad may
   //tou usay bachnay kay liye humnay date may 1s minus kardia (1000ms) just ha hack :)
   next()
 });

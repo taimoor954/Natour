@@ -7,17 +7,26 @@ const {
   createUser,
   deleteUser,
   updateUser,
-  updateMe
+  updateMe,
+  deleteme,
 } = require('../Controllers/userController');
-const { signup,login, forgotPassword , resetPassword, updatePassword, protectRouteMiddleware} = require('../Controllers/authenticationController');
+const {
+  signup,
+  login,
+  forgotPassword,
+  resetPassword,
+  updatePassword,
+  protectRouteMiddleware,
+} = require('../Controllers/authenticationController');
 
-router.post('/signup', signup); 
-router.post('/login', login); 
+router.post('/signup', signup);
+router.post('/login', login);
 
-router.post('/forgot-password', forgotPassword); 
-router.patch('/reset-password/:randomToken', resetPassword); 
-router.patch('/updatepassword', protectRouteMiddleware, updatePassword ); 
-router.patch('/updateme', protectRouteMiddleware, updateMe ); 
+router.post('/forgot-password', forgotPassword);
+router.patch('/reset-password/:randomToken', resetPassword);
+router.patch('/updatepassword', protectRouteMiddleware, updatePassword);
+router.patch('/updateme', protectRouteMiddleware, updateMe);
+router.delete('/deleteme', protectRouteMiddleware, deleteme); //for deactivation not deletion from mongo
 
 router.route('/').get(getAllUsers).post(createUser);
 router.route('/:id').patch(updateUser).delete(deleteUser).get(getUserById);

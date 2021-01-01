@@ -13,8 +13,8 @@ const filterRequestBody = (obj, ...allowedFields) => {
 exports.getAllUsers = catchAsync(async (request, response) => {
   const users = await User.find();
 
-  response.status(500).json({
-    status: 'error',
+  response.status(200).json({
+    status: 'success',
     length: users.length,
     data: {
       users,
@@ -52,6 +52,18 @@ exports.updateMe = catchAsync(async (request, response, next) => {
     },
   });
 });
+
+
+//IF USER WANT TO DELETE HIS ACCOUT (DELETION MEANS DEACTIVATION)
+exports.deleteme = catchAsync(async(request,response , next) => {
+  await User.findByIdAndUpdate(request.user.id, {active : false})
+  response.status(204).json({ //204 for deleted
+    status : 'success',
+    data : {
+      user : null
+    }
+  })
+})
 
 exports.createUser = (request, response) => {
   response.status(500).json({
