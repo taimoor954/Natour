@@ -1,30 +1,45 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit'); //safe side from denial attack  and brtue force attack
+const helmet = require('helmet')
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const {
   AppError
-} = require('./utils/Error')
-const globalErrorHandeler = require('./Controllers/errorController')
+} = require('./utils/Error');
+const globalErrorHandeler = require('./Controllers/errorController');
+
 const app = express();
+app.use(helmet()) //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
+
 dotenv.config({
-  path: `${__dirname}/config.env`
+  path: `${__dirname}/config.env`,
 });
-console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV);
+
 if (process.env.NODE_ENV == 'development') {
   app.use(morgan('dev'));
 }
-app.use(express.json());
+const limiter = rateLimit({
+  max: 100, //max 100 req can be send from a single api
+  windowMs: 60 * 60 * 1000, //100 req in 1 hout
+  message: 'Too many request from this IP. Try again in an hour', //if limit cross then show this message 
+});
+app.use('/api', limiter); //global middleware for all apis starting from '/api'
+app.use(express.json({
+  limit: '10kb' //size of req.body can be upto 10kb
+})); //BODY PARSER
+
 app.use(express.static(`${__dirname}/public`)); //for static file parameter take address of that static file
-//TODO: 
+//TODO:
 // app.use((request, response, next) => {
 //   //CREATING CUSTOM MIDDLEWARE
 //   console.log(request.protocol);
 //   console.log('HELLO FROM THE 1ST MIDDLEWARE');
 //   next();
 // })
-
+//TEST MIDDLEWARE
 app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE
   request.requestTime = new Date().toISOString();
@@ -53,12 +68,12 @@ app.all('*', (request, response, next) => {
   // response.status(404).json({
   //   status : 'failed',
   //   message : `route ${request.originalUrl} not found`
-  // }) 
+  // })
 
   // const err = new Error(`route ${request.originalUrl} not found`);
   // err.status = 'failed';
   // err.statusCode = 404;
-  // next(err); 
+  // next(err);
 
   //0R
 
