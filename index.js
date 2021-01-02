@@ -69,4 +69,4 @@ app.all('*', (request, response, next) => {
 });
 //middle ware for op error handeling
 app.use(globalErrorHandeler);
-module.exports = app; 
+module.exports = app;
