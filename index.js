@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const { AppError } = require('./utils/Error');
@@ -39,6 +40,20 @@ app.use(mongoSanitize());
 // cross site scripting attack also called XSS
 app.use(xss()); //    "name" : "<div id='bad-code'>Hello</div>" is insert as a request body it will sanitize that
 
+//for protection from paramter pollution
+// {{URL}}api/v1/tours?sort=duration&sort=price only last one will considered
+app.use(
+  hpp({
+    whitelist: [ //these fields are allowed for duplication //{{URL}}api/v1/tours?duration=5&duration=9 like this
+      'duration',
+      'ratingsQuantity',
+      'Average',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 app.use(express.static(`${__dirname}/public`)); //for static file parameter take address of that static file
 //TODO:
 // app.use((request, response, next) => {

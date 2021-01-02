@@ -31,12 +31,14 @@ class APIFeatures {
     if (this.queryString.sort) {
       // http://localhost:8000/api/v1/tours?sort=-price for descending sorting
       // http://localhost:8000/api/v1/tours?sort=price,maxGroupSize for more than 1 params
+      // console.log(this.queryString.sort)
       const sortBy = this.queryString.sort.split(',').join(' ');
       console.log(sortBy);
       this.query = this.query.sort(sortBy);
     } else {
       this.query = this.query.sort('-createdAt');
     }
+    // console.log(this)
     return this; // this return entire object
   }
   filedLimiting() {
