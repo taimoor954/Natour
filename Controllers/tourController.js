@@ -1,17 +1,8 @@
-const {
-  Tour
-} = require('../Models/tourModel');
-const {
-  APIFeatures
-} = require('../utils/apiFeatures');
-const {
-  AppError
-} = require('../utils/Error');
+const { Tour } = require('../Models/tourModel');
+const { APIFeatures } = require('../utils/apiFeatures');
+const { AppError } = require('../utils/Error');
 const mongoose = require('mongoose');
-const {
-  request,
-  response
-} = require('express');
+const { request, response } = require('express');
 const catchAsync = require('../utils/catchAsync');
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -116,11 +107,12 @@ exports.getAllTours = catchAsync(async (request, response, next) => {
   //
 
   //EXECUTE QUIERY
-  const features = new APIFeatures(Tour.find(), request.query)
+  const features = new APIFeatures(Tour.find().populate('guides'), request.query)
     .filter()
     .sort()
     .filedLimiting()
-    .pagination();
+    .pagination()
+    
 
   const tours = await features.query;
   response.status(200).json({
@@ -134,7 +126,8 @@ exports.getAllTours = catchAsync(async (request, response, next) => {
 });
 
 exports.getTourById = catchAsync(async (request, response, next) => {
-  const tour = await Tour.findById(request.params.id);
+  console.log(request.params.id);
+  const tour = await Tour.findById(request.params.id).populate('guides'); //this fill tha data of guide  sec 11 vid 7
   // Tour.findOne({_id : request.params.id})//ALTERNATIVE WAY OF FINDING DOCUMENT
   if (!tour) {
     return next(new AppError('No tour with this ID found', 404));
@@ -196,7 +189,8 @@ exports.deleteTour = catchAsync(async (request, response, next) => {
 
 exports.getTourStats = catchAsync(async (request, response, next) => {
   //AGGREGATION
-  const stats = await Tour.aggregate([{
+  const stats = await Tour.aggregate([
+    {
       $match: {
         ratingAverage: {
           $gte: 4.5,
@@ -252,7 +246,8 @@ exports.getTourStats = catchAsync(async (request, response, next) => {
 exports.monthlyPlan = catchAsync(async (request, response, next) => {
   //AGGREGATION PIPELINING
   const year = request.params.year * 1;
-  const plan = await Tour.aggregate([{
+  const plan = await Tour.aggregate([
+    {
       $unwind: '$startDates',
     },
     // unwind deconstruct karayga startDates array ko and output dega one document

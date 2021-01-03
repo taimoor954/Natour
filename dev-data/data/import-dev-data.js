@@ -26,7 +26,7 @@ var connectionDatabase = async () => {
 connectionDatabase();
 
 //IMPORT JSON DATA INTO DB
-const toursFromJSON  = fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
+const toursFromJSON  = fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
 const importData = async () => { 
     try{
         await Tour.create(JSON.parse(toursFromJSON))

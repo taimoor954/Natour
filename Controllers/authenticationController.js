@@ -96,7 +96,7 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
   //2validate token super imp step
   //3Check if user still exist
   //4check if the user changed password after the jwt was issued3
-  // console.log(process.env.TOKEN_EXPIRY_IN)
+
   //1Get Token and check if its there
   let token;
   //Headers may authorization as a key aiega value may Bearer<space>JWT
