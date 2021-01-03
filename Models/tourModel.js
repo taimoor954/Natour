@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator')
+const validator = require('validator');
+// const {
+//   User
+// } = require('./userModel');
+
 var tourSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -20,7 +24,6 @@ var tourSchema = new mongoose.Schema({
   price: {
     type: Number,
     required: [true, 'price of tour is must'],
-
   },
 
   duration: {
@@ -51,8 +54,9 @@ var tourSchema = new mongoose.Schema({
   priceDiscount: {
     type: Number,
     validate: {
-      validator: function (v) //custom validator, false returns validation error 
-      {
+      validator: function (
+        v //custom validator, false returns validation error
+      ) {
         //this will point to current doc so can be use with post but cant with update
         if (v < this.price) return true;
         else return false;
@@ -84,19 +88,60 @@ var tourSchema = new mongoose.Schema({
   startDates: {
     type: [Date],
   },
+  //EMBEDDED DATABASE
+  startLocation: {
+    //For location create like this
+    //GEOJSON FOR LONGITUDE AND LATITUDE HANDELING OR LOCATION HANDELING
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point'],
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+  },
+  locations: [{
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point'],
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+    day: Number,
+  }, ],
+
+  guides: [
+    {
+      type : mongoose.Schema.ObjectId,
+      ref : 'User' //refrence the collecition
+    }
+  ], 
+  
   secretTour: {
     type: Boolean,
     default: false,
   },
 }, {
   toJSON: {
-    virtuals: true
+    virtuals: true,
   },
 }, {
   toObject: {
-    virtuals: true
+    virtuals: true,   
   },
 });
+
+//RESPONSIBLE FOR PERFORMING EMBEDDING 
+// tourSchema.pre('save', async function (next) { //middleware to retrive user document by help of id 
+//   const getGuideUserPromises = this.guides.map(async id => await User.findById(id));
+//   this.guides = await Promise.all(getGuideUserPromises) //store all promises then run them all together
+//   next()
+
+// })
+
 //lecture 23 sec 8
 tourSchema.virtual('durationWeek').get(function () {
   //properties of scema like name duration but not
