@@ -113,13 +113,11 @@ var tourSchema = new mongoose.Schema({
     day: Number,
   }, ],
 
-  guides: [
-    {
-      type : mongoose.Schema.ObjectId,
-      ref : 'User' //refrence the collecition
-    }
-  ], 
-  
+  guides: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'User' //refrence the collecition
+  }],
+
   secretTour: {
     type: Boolean,
     default: false,
@@ -130,7 +128,7 @@ var tourSchema = new mongoose.Schema({
   },
 }, {
   toObject: {
-    virtuals: true,   
+    virtuals: true,
   },
 });
 
@@ -175,13 +173,23 @@ tourSchema.virtual('durationWeek').get(function () {
 // ********QUERIES-MIDDLEWARE**************
 //ALLOW middleware to run before and after quiery
 // pre
-// tourSchema.pre(/^find/, function(next){
-//   this.find({secretTour : {$ne : true}})
-//   //here this points the object of queries like find, insertMany, update , delete
-//   this.start = Date.now()
-//   console.log(`${this.start*1}ms`)
-//   next()
-// })
+tourSchema.pre(/^find/, function(next){
+  this.find({secretTour : {$ne : true}})
+  //here this points the object of queries like find, insertMany, update , delete
+  this.start = Date.now()
+  console.log(`${this.start*1}ms`)
+  next()
+})
+tourSchema.pre(/^find/, function(next){
+  this.populate({
+    path  : 'guides', //path tells which field to include
+    select  : '-__v -passwordChangedAt -passwordResetToken ' //wont be showed when displaying
+  })
+  next()
+})
+
+
+//POST QUERIES MIDWARE
 // tourSchema.post(/^find/, (doc, next)=> {
 //   console.log(`${Date.now()-this.start*1} ms`)
 //   next()
@@ -195,7 +203,7 @@ tourSchema.virtual('durationWeek').get(function () {
 //   next()
 // })
 
-var Tour = mongoose.model('Tour', tourSchema);
+var Tour = mongoose.model("Tours", tourSchema);
 exports.Tour = Tour;
 
 //there are middleware in mognoose as well

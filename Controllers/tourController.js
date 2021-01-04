@@ -107,7 +107,9 @@ exports.getAllTours = catchAsync(async (request, response, next) => {
   //
 
   //EXECUTE QUIERY
-  const features = new APIFeatures(Tour.find().populate('guides'), request.query)
+  //populate create a new quiry so this might affect the performance 
+  //so in big application it might have some affect 
+  const features = new APIFeatures(Tour.find(), request.query)
     .filter()
     .sort()
     .filedLimiting()
@@ -127,7 +129,9 @@ exports.getAllTours = catchAsync(async (request, response, next) => {
 
 exports.getTourById = catchAsync(async (request, response, next) => {
   console.log(request.params.id);
-  const tour = await Tour.findById(request.params.id).populate('guides'); //this fill tha data of guide  sec 11 vid 7
+  const tour = await Tour.findById(request.params.id) //query.populate has been performed iin quiery middleware in tour Model
+  
+  //this fill tha data of guide  sec 11 vid 7
   // Tour.findOne({_id : request.params.id})//ALTERNATIVE WAY OF FINDING DOCUMENT
   if (!tour) {
     return next(new AppError('No tour with this ID found', 404));
