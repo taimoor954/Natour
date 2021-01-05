@@ -8,6 +8,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
+const reviewRouter = require('./Routes/reviewsRoute');
 const { AppError } = require('./utils/Error');
 const globalErrorHandeler = require('./Controllers/errorController');
 // console.log(xss())
@@ -81,6 +82,7 @@ app.use((request, response, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 //OPREATIONAL ERROR
 //.all means for get post patch delete everything and
