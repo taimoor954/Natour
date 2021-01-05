@@ -2,7 +2,16 @@ const { Review } = require('../Models/reviewModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllReviews = catchAsync(async (request, response, nexr) => {
-  const reviews = await Review.find().select('-__v -id');
+  var filterObject = {}
+  console.log(request.params.tourId)
+  if(request.params.tourId)
+  {
+    filterObject= {
+      tour  : request.params.tourId
+    }
+  }
+  
+  const reviews = await Review.find(filterObject).select('-__v -id');
   response.status(200).json({
     status: 'Success',
     results: reviews.length,

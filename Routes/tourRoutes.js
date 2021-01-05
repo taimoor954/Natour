@@ -15,9 +15,11 @@ const {
   protectRouteMiddleware,
   restrictUser
 } = require('../Controllers/authenticationController');
-const { createReview } = require('../Controllers/reviewController');
+// const { createReview } = require('../Controllers/reviewController');
+const reviewRouter = require('../Routes/reviewsRoute');
 
 const router = express.Router();
+
 
 // router.param('id', checkId) //this is basically param middleware
 router.route('/top-5-cheapest').get(aliasTopTours, getAllTours);
@@ -29,8 +31,12 @@ router.route('/:id').patch(updateTour).delete(protectRouteMiddleware, restrictUs
 //NESTED ROUTE 
 //api/v1/tour/4564654/reviews
 //api/v1/tour/4564654/reviews/54654 THIS ONE AND ABOVE ONE IS BASICALLY A NESTED ROUTE 
-router.route('/:tourId/reviews').post(protectRouteMiddleware, restrictUser('user'), createReview);
+// router.route('/:tourId/reviews').post(protectRouteMiddleware, restrictUser('user'), createReview);
+//CREATE REVIEW HORAHA HAI BUT HO TOUR KAY ROUTE MAY ROUTE RAHA HAI WHICH IS WRONG
+//SO HUMNAY /:tourId/reviews KO REVIEWROUTE MAY BHEJ DIA TAKAY WO HANDLE KARAY
+//OR TOURID HUMNAY REVIEW KAY EXPRESS.ROUTER KAY PARAM MERGE KAY THRU GET KARLI
 
+router.use('/:tourId/reviews', reviewRouter) //for this case we want to use review router
 
 
 module.exports = router;
