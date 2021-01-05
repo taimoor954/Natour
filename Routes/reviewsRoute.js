@@ -1,9 +1,9 @@
 const express = require('express')
-const route = express.Router()
+const router = express.Router()
 const { getAllReviews,createReview } = require('../Controllers/reviewController')
 const {protectRouteMiddleware, restrictUser} = require('../Controllers/authenticationController')
 
-route.get('/', getAllReviews)
-route.post('/', protectRouteMiddleware, restrictUser('user'), createReview)
+router.route('/').get(getAllReviews)
+router.route('/').post( protectRouteMiddleware, restrictUser('user'))
 
-module.exports = route
+module.exports = router

@@ -39,6 +39,7 @@ const reviewSchema = new mongoose.Schema(
 );
 
 reviewSchema.pre(/^find/, function (next) {
+  //CHAIN OF POPULATE FOR TOUR AND USER 
   // this.populate({
   //   path: 'tour user', //path tells which field to include
   //   select:
