@@ -129,7 +129,7 @@ exports.getAllTours = catchAsync(async (request, response, next) => {
 
 exports.getTourById = catchAsync(async (request, response, next) => {
   console.log(request.params.id);
-  const tour = await Tour.findById(request.params.id) //query.populate has been performed iin quiery middleware in tour Model
+  const tour = await Tour.findById(request.params.id).populate('review') //query.populate has been performed iin quiery middleware in tour Model
   
   //this fill tha data of guide  sec 11 vid 7
   // Tour.findOne({_id : request.params.id})//ALTERNATIVE WAY OF FINDING DOCUMENT

@@ -39,10 +39,16 @@ const reviewSchema = new mongoose.Schema(
 );
 
 reviewSchema.pre(/^find/, function (next) {
+  // this.populate({
+  //   path: 'tour user', //path tells which field to include
+  //   select:
+  //     '-locations -description -duration -maxGroupSize -price  -imageCover -passwordResetToken -email -summary -difficulty -ratingsQuantity -ratingsAverage -guides -__v -passwordChangedAt -startLocation -images -startDates',
+  // });
+  // next();
   this.populate({
     path: 'tour user', //path tells which field to include
     select:
-      '-locations -description -summary -difficulty -ratingsQuantity -ratingsAverage -guides -__v -passwordChangedAt -startLocation -images -startDates',
+      '-locations -description -duration -maxGroupSize -price  -imageCover -passwordResetToken -email -summary -difficulty -ratingsQuantity -ratingsAverage -guides -__v -passwordChangedAt -startLocation -images -startDates -ratingQuantity -secretTour  -name',
   });
   next();
 });
