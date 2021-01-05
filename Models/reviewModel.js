@@ -45,10 +45,9 @@ reviewSchema.pre(/^find/, function (next) {
   //     '-locations -description -duration -maxGroupSize -price  -imageCover -passwordResetToken -email -summary -difficulty -ratingsQuantity -ratingsAverage -guides -__v -passwordChangedAt -startLocation -images -startDates',
   // });
   // next();
+  //ABOVE ONE TO SHOW EvRYTHING
   this.populate({
-    path: 'tour user', //path tells which field to include
-    select:
-      '-locations -description -duration -maxGroupSize -price  -imageCover -passwordResetToken -email -summary -difficulty -ratingsQuantity -ratingsAverage -guides -__v -passwordChangedAt -startLocation -images -startDates -ratingQuantity -secretTour  -name',
+    path: 'user', //path tells which field to include
   });
   next();
 });
