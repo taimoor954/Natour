@@ -1,15 +1,25 @@
 // IMPORTING JSON FILE AND EXPORTING TO DATABASE
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const fs= require('fs')
-const {Tour} = require('../../Models/tourModel')
+const fs = require('fs')
+const {
+  Tour
+} = require('../../Models/tourModel')
+const {
+  User
+} = require('../../Models/userModel')
+const {
+  Review
+} = require('../../Models/reviewModel')
 
-dotenv.config({ path: `${__dirname}../../../config.env` });
+dotenv.config({
+  path: `${__dirname}../../../config.env`
+});
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATA_BASE_PASSWORD
 );
-
+// console.log(DB)
 var connectionDatabase = async () => {
   try {
     await mongoose.connect(DB, {
@@ -26,36 +36,30 @@ var connectionDatabase = async () => {
 connectionDatabase();
 
 //IMPORT JSON DATA INTO DB
-const toursFromJSON  = fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
-const importData = async () => { 
-    try{
-        await Tour.create(JSON.parse(toursFromJSON))
-        console.log('data succesfully loaded')
-    }
-    catch(e)
-    {
-        console.log(e)
-    }
+const toursFromJSON = fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8')
+const importData = async () => {
+  try {
+    await Review.create(JSON.parse(toursFromJSON))
+    console.log('data succesfully loaded')
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 //DELETE ALL EXISITING IN DB
 
 const deleteDataFromDB = async () => {
-    try{
-        await Tour.deleteMany()//DELETE ALL DATA FROM DATABASE
-        console.log('data succesfully deleted')
-    }
-    catch(e)
-    {
-        console.log(e)
-    }
+  try {
+    await Review.deleteMany() //DELETE ALL DATA FROM DATABASE
+    console.log('data succesfully deleted')
+  } catch (e) {
+    console.log(e)
+  }
 }
-if(process.argv[2]=='--import') //CHECK ARG AT 2ND POSITION
+if (process.argv[2] == '--import') //CHECK ARG AT 2ND POSITION
 {
-    importData()
-}
-else if(process.argv[2]=='--delete')
-{
-deleteDataFromDB()
+  importData()
+} else if (process.argv[2] == '--delete') {
+  deleteDataFromDB()
 }
 console.log(process.argv)

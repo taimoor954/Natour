@@ -10,10 +10,10 @@ var tourSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Name of tour is must'], //VALIDATOR:if name is not given then 1 pos of array will work
     unique: true,
-    validate: {
-      validator: validator.isAlpha,
-      message: 'Your name must be unique with only alphabets init',
-    },
+    // validate: {
+    //   validator: validator.isAlpha,
+    //   message: 'Your name must be unique with only alphabets init',
+    // },
     maxlength: [40, 'a tour name must have less or equal than 40 charcaters'],
     minlength: [
       10,
