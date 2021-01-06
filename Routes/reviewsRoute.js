@@ -3,6 +3,7 @@ const router = express.Router({ mergeParams: true }); //to get access to tourID 
 const {
   getAllReviews,
   createReview,
+  deleteReview,
 } = require('../Controllers/reviewController');
 const {
   protectRouteMiddleware,
@@ -13,5 +14,7 @@ router
   .route('/')
   .get(getAllReviews)
   .post(protectRouteMiddleware, restrictUser('user'), createReview);
+
+router.route('/:id').delete(deleteReview)
 
 module.exports = router;

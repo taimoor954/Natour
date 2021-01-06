@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const { User } = require('../Models/userModel');
 const { AppError } = require('../utils/Error');
+const { deleteFactory } = require('./handlerFactory');
 
 const filterRequestBody = (obj, ...allowedFields) => {
   var filteredObject = {};
@@ -81,14 +82,7 @@ exports.updateUser = (request, response) => {
     },
   });
 };
-exports.deleteUser = (request, response) => {
-  response.status(500).json({
-    status: 'error',
-    data: {
-      data: 'Route not defined yet',
-    },
-  });
-};
+exports.deleteUser = deleteFactory(User)
 exports.getUserById = (request, response) => {
   response.status(500).json({
     status: 'error',

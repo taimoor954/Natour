@@ -4,6 +4,7 @@ const { AppError } = require('../utils/Error');
 const mongoose = require('mongoose');
 const { request, response } = require('express');
 const catchAsync = require('../utils/catchAsync');
+const { deleteFactory } = require('./handlerFactory');
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 // );
@@ -180,16 +181,7 @@ exports.updateTour = catchAsync(async (request, response, next) => {
   });
 });
 
-exports.deleteTour = catchAsync(async (request, response, next) => {
-  const tour = await Tour.findByIdAndDelete(request.params.id);
-  if (!tour) {
-    return next(new AppError('No tour with this ID found', 404));
-  }
-  return response.status(200).json({
-    status: 'Success ',
-    message: 'Succesfully deleted',
-  });
-});
+exports.deleteTour = deleteFactory(Tour)
 
 exports.getTourStats = catchAsync(async (request, response, next) => {
   //AGGREGATION

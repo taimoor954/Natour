@@ -1,8 +1,9 @@
 const { Review } = require('../Models/reviewModel');
 const catchAsync = require('../utils/catchAsync');
-
+const { deleteFactory } = require('./handlerFactory');
 exports.getAllReviews = catchAsync(async (request, response, nexr) => {
-  var filterObject = {}
+  var filterObject = {} //if any id is memtioned for specifc tour  review than get that id in a filter object
+  //then pass it to find else pass filter obj empty to get all tours 
   console.log(request.params.tourId)
   if(request.params.tourId)
   {
@@ -37,3 +38,5 @@ exports.createReview = catchAsync(async (request, response, nexr) => {
     },
   });
 });
+
+exports.deleteReview = deleteFactory(Review)
