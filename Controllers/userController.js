@@ -1,7 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const { User } = require('../Models/userModel');
 const { AppError } = require('../utils/Error');
-const { deleteFactory } = require('./handlerFactory');
+const { deleteFactory, updateFactory, getOneFactoryById, getAllFactory } = require('./handlerFactory');
 
 const filterRequestBody = (obj, ...allowedFields) => {
   var filteredObject = {};
@@ -11,17 +11,7 @@ const filterRequestBody = (obj, ...allowedFields) => {
   return filteredObject;
 };
 
-exports.getAllUsers = catchAsync(async (request, response) => {
-  const users = await User.find();
-
-  response.status(200).json({
-    status: 'success',
-    length: users.length,
-    data: {
-      users,
-    },
-  });
-});
+exports.getAllUsers = getAllFactory(User)
 
 //update user data is always handelling seperately from update password in normal web apps
 //user if (logged in) can update his/her data
@@ -70,24 +60,10 @@ exports.createUser = (request, response) => {
   response.status(500).json({
     status: 'error',
     data: {
-      data: 'Route not defined yet',
+      data: 'Route not defined yet , Please use signup route instad',
     },
   });
 };
-exports.updateUser = (request, response) => {
-  response.status(500).json({
-    status: 'error',
-    data: {
-      data: 'Route not defined yet',
-    },
-  });
-};
+exports.getUserById = getOneFactoryById(User)
+exports.updateUser = updateFactory(User);
 exports.deleteUser = deleteFactory(User)
-exports.getUserById = (request, response) => {
-  response.status(500).json({
-    status: 'error',
-    data: {
-      data: 'Route not defined yet',
-    },
-  });
-};

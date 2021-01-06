@@ -4,6 +4,9 @@ const {
   getAllReviews,
   createReview,
   deleteReview,
+  updateReview,
+  checkUserIDAndTourID,
+  getReviewById,
 } = require('../Controllers/reviewController');
 const {
   protectRouteMiddleware,
@@ -13,8 +16,11 @@ const {
 router
   .route('/')
   .get(getAllReviews)
-  .post(protectRouteMiddleware, restrictUser('user'), createReview);
+  .post(protectRouteMiddleware, restrictUser('admin','user'),checkUserIDAndTourID, createReview);
 
-router.route('/:id').delete(deleteReview)
+router.route('/:id').delete(deleteReview).patch(updateReview).get(getReviewById)
+
+
+
 
 module.exports = router;
