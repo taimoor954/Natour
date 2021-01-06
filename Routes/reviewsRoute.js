@@ -16,11 +16,17 @@ const {
 router
   .route('/')
   .get(getAllReviews)
-  .post(protectRouteMiddleware, restrictUser('admin','user'),checkUserIDAndTourID, createReview);
+  .post(
+    protectRouteMiddleware,
+    restrictUser('admin', 'user'),
+    checkUserIDAndTourID,
+    createReview
+  );
 
-router.route('/:id').delete(deleteReview).patch(updateReview).get(getReviewById)
-
-
-
+router
+  .route('/:id')
+  .delete(protectRouteMiddleware, restrictUser('admin', 'user'), deleteReview) //same route for {{URL}}api/v1/tours/5c88fa8cf4afda39709c2951/reviews
+  .patch(protectRouteMiddleware, restrictUser('admin', 'user'), updateReview) ////same route for {{URL}}api/v1/tours/5c88fa8cf4afda39709c2951/reviews
+  .get(getReviewById);
 
 module.exports = router;

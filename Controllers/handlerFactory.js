@@ -2,7 +2,6 @@ const { APIFeatures } = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const { AppError } = require('../utils/Error');
 
-
 //FACTORY FUNCTIONS
 //FACTORY FUNCTIONS ARE FUNCTIONS THAT RETURN A FUNCTION
 
@@ -72,31 +71,31 @@ exports.getOneFactoryById = (Model, populateOptions) =>
     // '/api/v1/tours/:id/:x/:y //use for multiple params { id: '8', x: '4', y: undefined }
   });
 
-  exports.getAllFactory = (Model) => catchAsync(async (request, response, next) => {
+exports.getAllFactory = (Model) =>
+  catchAsync(async (request, response, next) => {
     //SMALL HACK FOR REVIWS IN TOUR (NESTED TOUR AND REVIEW)
-    var filterObject = {} //if any id is memtioned for specifc tour  review than get that id in a filter object
-    //then pass it to find else pass filter obj empty to get all tours 
-    if(request.params.tourId)
-    {
-      filterObject= {
-        tour  : request.params.tourId
-      }
+    var filterObject = {}; //if any id is memtioned for specifc tour  review than get that id in a filter object
+    //then pass it to find else pass filter obj empty to get all tours
+    if (request.params.tourId) {
+      filterObject = {
+        tour: request.params.tourId,
+      };
     }
 
     // //SIMPLE QUERING
     // var queryObject = { ...request.query };
-  
+
     // const excludedFields = ['sort', 'page', 'limit', 'fields'];
     // excludedFields.forEach((e) => delete queryObject[e]);
     // //The JavaScript delete operator removes a property from an object;
     // //if no more references to the same property are held, it is eventually released automatically
     // // console.log(queryObject);
     // // const query =  Tour.find(queryObject); //1ST WAY OF QUERING DOCUMENT //returns query
-  
+
     // // const tours = await Tour.find()
     // // .where('difficulty').
     // // equals('easy')///ANOTHER WAY OF QUERING DOCUMENT
-  
+
     // //1 ADVANCE QUERY
     // var queryStr = JSON.stringify(queryObject);
     // queryStr = queryStr.replace(/\b(lte|lt|gte|gt)\b/g, (match) => `$${match}`);
@@ -104,7 +103,7 @@ exports.getOneFactoryById = (Model, populateOptions) =>
     // let query = Tour.find(JSON.parse(queryStr)); //1ST WAY OF QUERING DOCUMENT //returns query
     // //{duration : {$gte : '5'}, difficulty : 'easy'} //WAY OF WRIITNG A QUERY
     // // { duration: { gte: '5' }, difficulty: 'easy' }//WHAT WE GOT FROM REQUEST.QUERY
-  
+
     //2 SORTING
     // if (request.query.sort) {
     //   // http://localhost:8000/api/v1/tours?sort=-price for descending sorting
@@ -116,7 +115,7 @@ exports.getOneFactoryById = (Model, populateOptions) =>
     // else{
     //   query = query.sort('-createdAt')
     // }
-  
+
     //3FIELD LIMITING
     // if(request.query.fields)
     // {
@@ -127,7 +126,7 @@ exports.getOneFactoryById = (Model, populateOptions) =>
     // else{
     //   query = query.select('-__v ')
     // }
-  
+
     //4PAGINATION
     //consider we have 1000 docs in a collection so we divide 100 docs in a page
     //therefore 10 pages will be created//THIS IS LIKE CHUNKS SO WE DONT HAVE TO QUERY
@@ -147,17 +146,16 @@ exports.getOneFactoryById = (Model, populateOptions) =>
     //     }
     //   }
     //
-  
+
     //EXECUTE QUIERY
-    //populate create a new quiry so this might affect the performance 
-    //so in big application it might have some affect 
+    //populate create a new quiry so this might affect the performance
+    //so in big application it might have some affect
     const features = new APIFeatures(Model.find(filterObject), request.query)
       .filter()
       .sort()
       .filedLimiting()
-      .pagination()
-      
-  
+      .pagination();
+
     const doc = await features.query;
     return response.status(200).json({
       status: 'Success',

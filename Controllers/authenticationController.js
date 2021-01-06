@@ -158,7 +158,7 @@ exports.restrictUser = (...roles) => {
     //tabhi request.user milay ga
     if (!roles.includes(request.user.role)) {
       return next(
-        new AppError('You do not have permisson to perform this actin', 403)
+        new AppError('You do not have permisson to perform this action', 403)
       );
     }
     next();

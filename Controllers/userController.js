@@ -1,7 +1,12 @@
 const catchAsync = require('../utils/catchAsync');
 const { User } = require('../Models/userModel');
 const { AppError } = require('../utils/Error');
-const { deleteFactory, updateFactory, getOneFactoryById, getAllFactory } = require('./handlerFactory');
+const {
+  deleteFactory,
+  updateFactory,
+  getOneFactoryById,
+  getAllFactory,
+} = require('./handlerFactory');
 
 const filterRequestBody = (obj, ...allowedFields) => {
   var filteredObject = {};
@@ -11,7 +16,7 @@ const filterRequestBody = (obj, ...allowedFields) => {
   return filteredObject;
 };
 
-exports.getAllUsers = getAllFactory(User)
+exports.getAllUsers = getAllFactory(User);
 
 //update user data is always handelling seperately from update password in normal web apps
 //user if (logged in) can update his/her data
@@ -44,17 +49,24 @@ exports.updateMe = catchAsync(async (request, response, next) => {
   });
 });
 
+exports.getUserId = (request, response , next) => {
 
+  request.params.id = request.user.id //getOneFactoryById may id jayegi as a param humnay protected middleware kay thru joid aie thi wo ismay set kara di
+  next()
+}
+
+exports.getMe = getOneFactoryById(User)
 //IF USER WANT TO DELETE HIS ACCOUT (DELETION MEANS DEACTIVATION)
-exports.deleteme = catchAsync(async(request,response , next) => {
-  await User.findByIdAndUpdate(request.user.id, {active : false})
-  response.status(204).json({ //204 for deleted
-    status : 'success',
-    data : {
-      user : null
-    }
-  })
-})
+exports.deleteme = catchAsync(async (request, response, next) => {
+  await User.findByIdAndUpdate(request.user.id, { active: false });
+  response.status(204).json({
+    //204 for deleted
+    status: 'success',
+    data: {
+      user: null,
+    },
+  });
+});
 
 exports.createUser = (request, response) => {
   response.status(500).json({
@@ -64,6 +76,6 @@ exports.createUser = (request, response) => {
     },
   });
 };
-exports.getUserById = getOneFactoryById(User)
+exports.getUserById = getOneFactoryById(User);
 exports.updateUser = updateFactory(User);
-exports.deleteUser = deleteFactory(User)
+exports.deleteUser = deleteFactory(User);
