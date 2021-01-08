@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const {Tour} = require('../Models/tourModel');
 const reviewSchema = new mongoose.Schema(
   {
     rating: {
@@ -17,7 +17,7 @@ const reviewSchema = new mongoose.Schema(
       required: [true, 'review must belong to a tour'],
     },
     user: {
-      type: mongoose.Schema.ObjectId,
+      type: mongoose.Schema.ObjectId, 
       ref: 'User',
       required: [true, 'review must belong to a user'],
     },
@@ -52,6 +52,28 @@ reviewSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
+//STATIC METHOD FOR CALCULATION calculate AverageRating For Specific Tour
+reviewSchema.statics.calculateAverageRatingForSpecTour = async function(tourId){
+  const stats = await this.aggregate([ //this points at REVIEW MODEL and thats why we used STatic method to point
+    //at Review Model
+    {$match : {tour : tourId}},
+    {$group : {
+      _id : '$tour',
+      nRating : {$sum : 1},
+      avgRating : {$avg : '$rating'}
+    }}
+  ])
+  console.log(stats)
+ await Tour.findByIdAndUpdate(tourId, {ratingQuantity : stats[0].nRating, ratingAverage : stats[0].avgRating})
+}
+
+reviewSchema.post('save', function(){  
+ 
+  // this.constructor().calculateAverageRatingForSpecTour(this.tour) // OR BELOW ONE
+
+  Review.calculateAverageRatingForSpecTour(this.tour)
+})
 
 const Review = mongoose.model('reviews', reviewSchema);
 

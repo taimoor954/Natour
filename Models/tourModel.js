@@ -10,10 +10,10 @@ var tourSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Name of tour is must'], //VALIDATOR:if name is not given then 1 pos of array will work
     unique: true,
-    // validate: {
-    //   validator: validator.isAlpha,
-    //   message: 'Your name must be unique with only alphabets init',
-    // },
+    validate: {
+      validator: validator.isAlpha,
+      message: 'Your name must be unique with only alphabets init',
+    },
     maxlength: [40, 'a tour name must have less or equal than 40 charcaters'],
     minlength: [
       10,
@@ -132,6 +132,12 @@ var tourSchema = new mongoose.Schema({
     virtuals: true,
   },
 });
+
+// tourSchema.index({price : 1}) // SINGLE INDEXING BELOW ONE IS COMPUND INDEX
+tourSchema.index({slug : 1}) 
+tourSchema.index({price : 1, ratingAverage : -1}) //INDEX ARE USE TO QUERY FASTER IDS ARE BY DEFAULT INDEXED BUT AESI FIELDS
+//JINKAY BASIS PER QUERY HOSAKTI HAI WO JALD SAY JALD WORK KARNI CHAIYA LIKE PRICE AND FOR THAT WE USE INDEX FUNC
+//1 MEANS ASCEDNING CAN ALSO USE -1 FOR DESCENDING
 
 //RESPONSIBLE FOR PERFORMING EMBEDDING 
 // tourSchema.pre('save', async function (next) { //middleware to retrive user document by help of id 

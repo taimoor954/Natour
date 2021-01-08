@@ -72,7 +72,9 @@ exports.getOneFactoryById = (Model, populateOptions) =>
   });
 
 exports.getAllFactory = (Model) =>
+  
   catchAsync(async (request, response, next) => {
+    console.log(request.params.ratingAverage)
     //SMALL HACK FOR REVIWS IN TOUR (NESTED TOUR AND REVIEW)
     var filterObject = {}; //if any id is memtioned for specifc tour  review than get that id in a filter object
     //then pass it to find else pass filter obj empty to get all tours
@@ -156,7 +158,8 @@ exports.getAllFactory = (Model) =>
       .filedLimiting()
       .pagination();
 
-    const doc = await features.query;
+    // const doc = await features.query.explain(); //FOR QUERY STATS USE EXPLAIN()
+    const doc = await features.query
     return response.status(200).json({
       status: 'Success',
       results: doc.length,

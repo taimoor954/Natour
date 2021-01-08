@@ -36,10 +36,10 @@ var connectionDatabase = async () => {
 connectionDatabase();
 
 //IMPORT JSON DATA INTO DB
-const toursFromJSON = fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8')
+const toursFromJSON = fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
 const importData = async () => {
   try {
-    await Review.create(JSON.parse(toursFromJSON))
+    await Tour.create(JSON.parse(toursFromJSON))
     console.log('data succesfully loaded')
   } catch (e) {
     console.log(e)
@@ -50,7 +50,7 @@ const importData = async () => {
 
 const deleteDataFromDB = async () => {
   try {
-    await Review.deleteMany() //DELETE ALL DATA FROM DATABASE
+    await Tour.deleteMany() //DELETE ALL DATA FROM DATABASE
     console.log('data succesfully deleted')
   } catch (e) {
     console.log(e)
