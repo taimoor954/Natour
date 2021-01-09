@@ -214,7 +214,7 @@ exports.tourWithin = catchAsync(async (request, response, next) => {
     },
   });
 });
-
+ 
 //TO GET DISTANCE FROM A CERTAIN POINT WHERE YOURE RIGHT NOW TILL ALL OUR ROUTES
 exports.getDistancesFromCertainPoint = catchAsync(
   async (request, response, next) => {
