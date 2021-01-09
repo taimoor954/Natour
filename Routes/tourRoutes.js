@@ -9,6 +9,8 @@ const {
   aliasTopTours,
   getTourStats,
   monthlyPlan,
+  tourWithin,
+  getDistancesFromCertainPoint,
 } = require('../Controllers/tourController');
 const {
   protectRouteMiddleware,
@@ -51,6 +53,12 @@ router
   )
   .get(getTourById);
 
+//get distances from certain point
+router.route('/tour-within/:latlng/unit/:unit').get(getDistancesFromCertainPoint)
+
+
+router.route('/tour-within/:distance/center/:latlng/unit/:unit').get(tourWithin)
+
 //NESTED ROUTE
 //api/v1/tour/4564654/reviews
 //api/v1/tour/4564654/reviews/54654 THIS ONE AND ABOVE ONE IS BASICALLY A NESTED ROUTE
@@ -58,6 +66,8 @@ router
 //CREATE REVIEW HORAHA HAI BUT HO TOUR KAY ROUTE MAY ROUTE RAHA HAI WHICH IS WRONG
 //SO HUMNAY /:tourId/reviews KO REVIEWROUTE MAY BHEJ DIA TAKAY WO HANDLE KARAY
 //OR TOURID HUMNAY REVIEW KAY EXPRESS.ROUTER KAY PARAM MERGE KAY THRU GET KARLI
+
+
 
 router.use('/:tourId/reviews', reviewRouter); //for this case we want to use review router
 

@@ -139,6 +139,7 @@ tourSchema.index({slug : 1})
 tourSchema.index({price : 1, ratingAverage : -1}) //INDEX ARE USE TO QUERY FASTER IDS ARE BY DEFAULT INDEXED BUT AESI FIELDS
 //JINKAY BASIS PER QUERY HOSAKTI HAI WO JALD SAY JALD WORK KARNI CHAIYA LIKE PRICE AND FOR THAT WE USE INDEX FUNC
 //1 MEANS ASCEDNING CAN ALSO USE -1 FOR DESCENDING
+tourSchema.index({startLocation : '2dsphere'})
 
 //RESPONSIBLE FOR PERFORMING EMBEDDING 
 // tourSchema.pre('save', async function (next) { //middleware to retrive user document by help of id 

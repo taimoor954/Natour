@@ -187,3 +187,71 @@ exports.monthlyPlan = catchAsync(async (request, response, next) => {
 //   // '/api/v1/tours/:id/:x/:y? //question mark makes y param as an optonal { id: '8', x: '4', y: undefined }
 //   // '/api/v1/tours/:id/:x/:y //use for multiple params { id: '8', x: '4', y: undefined }
 // });
+
+//A ROUTE TO GET ALL TOURS WITHIN CERTAIN RADIUS BY PROVIDING DISTANCE, LATLNG & UNIT
+// router.route('/tour-within/:distance/center/:latlng/unit/:unit')
+// 24.965619, 67.071935 lat,lng format
+exports.tourWithin = catchAsync(async (request, response, next) => {
+  var { distance, latlng, unit } = request.params;
+  var [lat, lng] = latlng.split(',');
+  const radius = unit == 'miles' ? distance / 3963.2 : distance / 6378.1;
+  if (!lat || !lng) {
+    next(new AppError('No longitude or latitude provide', 400));
+  }
+  // console.log(distance)
+  // console.log(lat)
+  // console.log(lng)
+  // console.log(unit)  x
+
+  const tour = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  }); //lbg first always and array within array is must
+  response.status(200).json({
+    status: 'success',
+    results: tour.length,
+    data: {
+      tour,
+    },
+  });
+});
+
+//TO GET DISTANCE FROM A CERTAIN POINT WHERE YOURE RIGHT NOW TILL ALL OUR ROUTES
+exports.getDistancesFromCertainPoint = catchAsync(
+  async (request, response, next) => {
+    var { latlng, unit } = request.params;
+    var [lat, lng] = latlng.split(',');
+    const multiplier = unit == 'miles' ? 0.000621371 : 0.001 //MILES CONVERTER : KILOMETER
+    // const radius = unit == 'miles' ? distance / 3963.2 : distance / 6378.1
+    if (!lat || !lng) {
+      next(new AppError('No longitude or latitude provide', 400));
+    }
+    
+    const distances = await Tour.aggregate([
+      {
+        $geoNear: {
+          //ONLY STAGE TO CALCULATE DISTANCE AND SHOULD BE FIRST ONE AND IT REQUIURES ON OF OUR REQUIRED GEOSPHRER INDEX WHICH IN OUR CASE IS tourSchema.index({startLocation : '2dsphere'})
+
+          near: { //ALL THE DISTANCES WILL BE CALCULATED FROM THIS POINT (WHRE YOU ARE AT THE MOMENT)
+            type: 'Point', //THIS OBJCT IS CALLED GEOJSON
+            coordinates: [lng * 1, lat * 1],
+          },
+          distanceField: 'distance', //WILL BE CREATED WHERE ALL THE CALC DISTANCES WILL BE STORED
+          distanceMultiplier  : multiplier
+        },
+        
+      },
+      {
+          $project  : {
+            distance  : 1,
+            name  : 1
+          }
+      }
+    ]);
+    response.status(200).json({
+      status: 'success',
+      data: {
+        distances,
+      },
+    });
+  }
+);
