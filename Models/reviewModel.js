@@ -38,6 +38,9 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.index({tour : 1, user : 1}, {unique : true}) //WE CANT CREATE 2 REVIWS FOR A TOUR BY A SPECFIC USER
+//FOR THIS PUROPOSE WE USE COMPOUND KEY. ONLY 1 REVIEW CAN BE CREATED BY A USER FOR 1 TOUR 
+
 reviewSchema.pre(/^find/, function (next) {
   //CHAIN OF POPULATE FOR TOUR AND USER
   // this.populate({
@@ -75,7 +78,7 @@ reviewSchema.statics.calculateAverageRatingForSpecTour = async function (
     ratingQuantity: stats[0].nRating,
     ratingAverage: stats[0].avgRating,
   
-  });
+  }); 
 }
   else{ //if all reviews are deleted then set ratingQuantity to 0 and ratingAverage to 4.5
     await Tour.findByIdAndUpdate(tourId, {

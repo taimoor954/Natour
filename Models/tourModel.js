@@ -46,6 +46,7 @@ var tourSchema = new mongoose.Schema({
     type: Number,
     min: [1, 'somee issue with min'],
     max: [5, 'somee issue with max'],
+    set: val => Math.round(val*10/10) //round will give int so 4.6 will be round to 4,7 therfore 4.6*10 i.e 46 then 46/10 i.e 4.6 
   },
   ratingQuantity: {
     type: Number,
