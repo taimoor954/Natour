@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express');
 const rateLimit = require('express-rate-limit'); //safe side from denial attack  and brtue force attack
 const helmet = require('helmet');
@@ -13,8 +14,14 @@ const { AppError } = require('./utils/Error');
 const globalErrorHandeler = require('./Controllers/errorController');
 // console.log(xss())
 const app = express();
-app.use(helmet()); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
+app.set('view engine', 'pug') //thats how we set template engine in express
+app.set('views', path.join(__dirname, 'View'))
 
+
+//GLOBAL MIDDLEWARES
+app.use(express.static(`${__dirname}/public`)); //for static file parameter take address of that static file
+
+app.use(helmet()); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
 dotenv.config({
   path: `${__dirname}/config.env`,
 });
@@ -55,7 +62,6 @@ app.use(
     ],
   })
 );
-app.use(express.static(`${__dirname}/public`)); //for static file parameter take address of that static file
 //TODO:
 // app.use((request, response, next) => {
 //   //CREATING CUSTOM MIDDLEWARE
@@ -79,7 +85,14 @@ app.use((request, response, next) => {
 
   next();
 });
-
+//ROUTES FOR PUG RENDERING
+app.use('/', (request, response)=> {
+  response.status(200).render('base',{
+    tour : "Forest hiker",
+    user : 'Muhammad Taimoor'
+  })
+})
+//ROUTES FOR ROUTE HANDLER  
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
