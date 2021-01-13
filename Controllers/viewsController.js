@@ -20,3 +20,13 @@ exports.getTour = catchAsync(async (request, response) => {
     title: 'The Forest Hiker Tour'
   })
 })
+exports.getTourById = catchAsync(async(request, response)=> {
+const tour = await Tour.findById(request.params.tourId).populate({
+  path : 'reviews',
+  fields : 'review rating user'
+})
+response.status(200).render('tour', {
+  title: 'The Forest Hiker Tour',
+  tour
+})
+})
