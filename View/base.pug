@@ -1,12 +1,42 @@
 doctype html
 html
     head
-        title Natours #{tour}
-        link(rel="stylesheet", href="css/style.css")
+        meta(charset='UTF-8')
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        title Natours | Exciting tours for adventurous people
+        link(rel='stylesheet', href='css/style.css')
         link(rel='shortcut icon', type='image/png', href='img/favicon.png')
+        link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
+
     body
-        h1=tour 
-        h1=user.toUpperCase()
-        - const a = 8;
-        h2=a
-        p Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum illo, blanditiis consequuntur molestias a quidem dignissimos numquam deserunt delectus dolor ullam ipsam nisi cupiditate iure molestiae sint officia repellat at!
+        //HEADER
+        header.header
+            nav.nav.nav--tours
+                a.nav__el(href='#') All Tours
+            .header__logo
+                img(src='img/logo-white.png', alt='Natours logo', srcset="")
+            nav.nav.nav--user
+                //- a.nav.__el(href='#') My bookings
+                //- a.nav.__el(href='#')
+                //-     img.nav__user-img(src='img/user.jpg', alt='User photo')
+                //-     span  Jonas 
+                button.nav__el Log in
+                button.nav__el.nav__el--cta Sign up
+        //CONTENT
+        section.overview
+            h1=tour
+
+        //FOOTER
+        footer.footer
+            .footer__logo
+                img(src="img/logo-green.png", alt="Natours logo", srcset="")
+            ul.footer__nav
+                li: a(href='#') About Us
+                li: a(href='#') Download App
+                li: a(href='#') Become a guide
+                li: a(href='#') Contact
+                li: a(href='#') Careers
+            p.footer__copyright &copy; by Muhammad Taimoor.
+
+
+
