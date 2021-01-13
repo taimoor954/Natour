@@ -10,6 +10,7 @@ const hpp = require('hpp');
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const reviewRouter = require('./Routes/reviewsRoute');
+const viewRouter = require('./Routes/viewRoutes');
 const {
   AppError
 } = require('./utils/Error');
@@ -87,25 +88,9 @@ app.use((request, response, next) => {
 
   next();
 });
-//ROUTES FOR PUG RENDERING
-app.get('/', (request, response) => {
-  response.status(200).render('base', {
-    tour: "Forest hiker",
-    user: 'Muhammad Taimoor'
-  })
-})
 
-app.get('/overview', (request, response) => {
-  response.status(200).render('overview', {
-    title: 'All Tours'
-  })
-})
-app.get('/tour', (request, response) => {
-  response.status(200).render('tour', {
-    title: 'The Forest Hiker Tour'
-  })
-})
 //ROUTES FOR ROUTE HANDLER  
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
