@@ -28,7 +28,7 @@ app.use(helmet()); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
 dotenv.config({
   path: `${__dirname}/config.env`,
 });
-console.log(process.env.NODE_ENV);
+console.log(process.env.NODE_ENV );
 
 if (process.env.NODE_ENV == 'development') {
   app.use(morgan('dev'));
