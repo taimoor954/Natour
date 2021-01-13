@@ -178,12 +178,12 @@ tourSchema.virtual('durationWeek').get(function () {
 //pre and post ye 2 hooks hotay hen
 //pre save or create say pehlay chalay ga
 
-// tourSchema.pre('save', function(next) //'save' is hook pre hook
-// {
-//   //here this will target the schema properries
-// this.slug = slugify(this.name, {lower : true})
-// next()
-// })
+tourSchema.pre('save', function(next) //'save' is hook pre hook
+{
+  //here this will target the schema properries
+this.slug = slugify(this.name, {lower : true})
+next()
+})
 // //POST save or create KAY BAD  chalay ga
 
 // tourSchema.post('save', function(doc, next) //saave here is post hook
