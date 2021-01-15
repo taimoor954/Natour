@@ -1,6 +1,10 @@
-const { APIFeatures } = require('../utils/apiFeatures');
+const {
+  APIFeatures
+} = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-const { AppError } = require('../utils/Error');
+const {
+  AppError
+} = require('../utils/Error');
 
 //FACTORY FUNCTIONS
 //FACTORY FUNCTIONS ARE FUNCTIONS THAT RETURN A FUNCTION
@@ -72,7 +76,7 @@ exports.getOneFactoryById = (Model, populateOptions) =>
   });
 
 exports.getAllFactory = (Model) =>
-  
+
   catchAsync(async (request, response, next) => {
     console.log(request.params.ratingAverage)
     //SMALL HACK FOR REVIWS IN TOUR (NESTED TOUR AND REVIEW)

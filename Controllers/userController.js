@@ -1,6 +1,10 @@
 const catchAsync = require('../utils/catchAsync');
-const { User } = require('../Models/userModel');
-const { AppError } = require('../utils/Error');
+const {
+  User
+} = require('../Models/userModel');
+const {
+  AppError
+} = require('../utils/Error');
 const {
   deleteFactory,
   updateFactory,
@@ -38,8 +42,10 @@ exports.updateMe = catchAsync(async (request, response, next) => {
   const filteredObj = filterRequestBody(request.body, 'name', 'email');
   const updatedUser = await User.findByIdAndUpdate(
     request.user.id,
-    filteredObj,
-    { new: true, runValidators: true }
+    filteredObj, {
+      new: true,
+      runValidators: true
+    }
   );
   response.status(200).json({
     status: 'success',
@@ -49,7 +55,7 @@ exports.updateMe = catchAsync(async (request, response, next) => {
   });
 });
 
-exports.getUserId = (request, response , next) => {
+exports.getUserId = (request, response, next) => {
 
   request.params.id = request.user.id //getOneFactoryById may id jayegi as a param humnay protected middleware kay thru joid aie thi wo ismay set kara di
   next()
@@ -58,7 +64,9 @@ exports.getUserId = (request, response , next) => {
 exports.getMe = getOneFactoryById(User)
 //IF USER WANT TO DELETE HIS ACCOUT (DELETION MEANS DEACTIVATION)
 exports.deleteme = catchAsync(async (request, response, next) => {
-  await User.findByIdAndUpdate(request.user.id, { active: false });
+  await User.findByIdAndUpdate(request.user.id, {
+    active: false
+  });
   response.status(204).json({
     //204 for deleted
     status: 'success',

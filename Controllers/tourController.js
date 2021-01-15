@@ -1,8 +1,17 @@
-const { Tour } = require('../Models/tourModel');
-const { APIFeatures } = require('../utils/apiFeatures');
-const { AppError } = require('../utils/Error');
+const {
+  Tour
+} = require('../Models/tourModel');
+const {
+  APIFeatures
+} = require('../utils/apiFeatures');
+const {
+  AppError
+} = require('../utils/Error');
 const mongoose = require('mongoose');
-const { request, response } = require('express');
+const {
+  request,
+  response
+} = require('express');
 const catchAsync = require('../utils/catchAsync');
 const {
   deleteFactory,
@@ -48,15 +57,18 @@ exports.aliasTopTours = (request, response, next) => {
 };
 
 exports.getAllTours = getAllFactory(Tour);
-exports.getTourById = getOneFactoryById(Tour, { path: 'review' });
+exports.getTourById = getOneFactoryById(Tour, {
+  path: 'review',
+
+
+});
 exports.createTour = createFactory(Tour);
 exports.updateTour = updateFactory(Tour);
 exports.deleteTour = deleteFactory(Tour);
 
 exports.getTourStats = catchAsync(async (request, response, next) => {
   //AGGREGATION
-  const stats = await Tour.aggregate([
-    {
+  const stats = await Tour.aggregate([{
       $match: {
         ratingAverage: {
           $gte: 4.5,
@@ -112,8 +124,7 @@ exports.getTourStats = catchAsync(async (request, response, next) => {
 exports.monthlyPlan = catchAsync(async (request, response, next) => {
   //AGGREGATION PIPELINING
   const year = request.params.year * 1;
-  const plan = await Tour.aggregate([
-    {
+  const plan = await Tour.aggregate([{
       $unwind: '$startDates',
     },
     // unwind deconstruct karayga startDates array ko and output dega one document
@@ -192,7 +203,11 @@ exports.monthlyPlan = catchAsync(async (request, response, next) => {
 // router.route('/tour-within/:distance/center/:latlng/unit/:unit')
 // 24.965619, 67.071935 lat,lng format
 exports.tourWithin = catchAsync(async (request, response, next) => {
-  var { distance, latlng, unit } = request.params;
+  var {
+    distance,
+    latlng,
+    unit
+  } = request.params;
   var [lat, lng] = latlng.split(',');
   const radius = unit == 'miles' ? distance / 3963.2 : distance / 6378.1;
   if (!lat || !lng) {
@@ -204,7 +219,13 @@ exports.tourWithin = catchAsync(async (request, response, next) => {
   // console.log(unit)  x
 
   const tour = await Tour.find({
-    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    startLocation: {
+      $geoWithin: {
+        $centerSphere: [
+          [lng, lat], radius
+        ]
+      }
+    },
   }); //lbg first always and array within array is must
   response.status(200).json({
     status: 'success',
@@ -214,20 +235,22 @@ exports.tourWithin = catchAsync(async (request, response, next) => {
     },
   });
 });
- 
+
 //TO GET DISTANCE FROM A CERTAIN POINT WHERE YOURE RIGHT NOW TILL ALL OUR ROUTES
 exports.getDistancesFromCertainPoint = catchAsync(
   async (request, response, next) => {
-    var { latlng, unit } = request.params;
+    var {
+      latlng,
+      unit
+    } = request.params;
     var [lat, lng] = latlng.split(',');
     const multiplier = unit == 'miles' ? 0.000621371 : 0.001 //MILES CONVERTER : KILOMETER
     // const radius = unit == 'miles' ? distance / 3963.2 : distance / 6378.1
     if (!lat || !lng) {
       next(new AppError('No longitude or latitude provide', 400));
     }
-    
-    const distances = await Tour.aggregate([
-      {
+
+    const distances = await Tour.aggregate([{
         $geoNear: {
           //ONLY STAGE TO CALCULATE DISTANCE AND SHOULD BE FIRST ONE AND IT REQUIURES ON OF OUR REQUIRED GEOSPHRER INDEX WHICH IN OUR CASE IS tourSchema.index({startLocation : '2dsphere'})
 
@@ -236,15 +259,15 @@ exports.getDistancesFromCertainPoint = catchAsync(
             coordinates: [lng * 1, lat * 1],
           },
           distanceField: 'distance', //WILL BE CREATED WHERE ALL THE CALC DISTANCES WILL BE STORED
-          distanceMultiplier  : multiplier
+          distanceMultiplier: multiplier
         },
-        
+
       },
       {
-          $project  : {
-            distance  : 1,
-            name  : 1
-          }
+        $project: {
+          distance: 1,
+          name: 1
+        }
       }
     ]);
     response.status(200).json({

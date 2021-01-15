@@ -15,18 +15,19 @@ exports.getOverview = catchAsync(async (request, response) => {
   })
 })
 
-exports.getTour = catchAsync(async (request, response) => {
-  response.status(200).render('tour', {
-    title: 'The Forest Hiker Tour'
+// exports.getTour = catchAsync(async (request, response) => {
+//   response.status(200).render('tour', {
+//     title: 'The Forest Hiker Tour'
+//   })
+// })
+exports.getTourById = catchAsync(async (request, response) => {
+  const tour = await Tour.findById(request.params.tourId).populate({
+    path: 'reviews',
+    fields: 'review rating user'
   })
-})
-exports.getTourById = catchAsync(async(request, response)=> {
-const tour = await Tour.findById(request.params.tourId).populate({
-  path : 'reviews',
-  fields : 'review rating user'
-})
-response.status(200).render('tour', {
-  title: 'The Forest Hiker Tour',
-  tour
-})
+  console.log(tour.review)
+  response.status(200).render('tour', {
+    title: tour.name,
+    tour
+  })
 })

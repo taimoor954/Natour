@@ -49,6 +49,7 @@ exports.signup = catchAsync(async (request, response, next) => {
     role: request.body.role,
     password: request.body.password,
     passwordConfirm: request.body.passwordConfirm,
+    
   });
   //payload, secretString, optinal callback m optional call back tells when jwt should expire
   createSendToken(newUser, 201, response);

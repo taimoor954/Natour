@@ -48,8 +48,10 @@ exports.checkUserIDAndTourID = (request, response, next) => {
   //     },
   //   });
   // }); //ALL NOW SENT TO MIDDLEWARE
-  exports.getAllReviews = getAllFactory(Review)
-  exports.getReviewById = getOneFactoryById(Review)
-  exports.createReview = createFactory(Review)
+ 
+  
+exports.getAllReviews = getAllFactory(Review)
+exports.getReviewById = getOneFactoryById(Review, {path : 'user'})
+exports.createReview = createFactory(Review)
 exports.deleteReview = deleteFactory(Review)
 exports.updateReview = updateFactory(Review)

@@ -52,6 +52,7 @@ reviewSchema.pre(/^find/, function (next) {
   //ABOVE ONE TO SHOW EvRYTHING
   this.populate({
     path: 'user', //path tells which field to include
+    select : 'name photo'
   });
   next();
 });
