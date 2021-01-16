@@ -65,7 +65,7 @@ userSchema.pre(/^find/, function (next) {
     active: {$ne : false}
   })
   next()
-})
+}) 
 
 
 //hash pass before saving doc

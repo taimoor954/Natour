@@ -102,7 +102,7 @@ reviewSchema.pre(/^findOneAnd/,async function(next){
   // console.log(this) //HERE THIS POINTS AT QUERY WHICH IS FINEONE QUERY
   //WE NEED TO POINT AT MODEL SO THAT WE CAN UPDATE IT, BUT THIS HERE POINTS AT QUERY SO HERE IS A SOLUUTION
   this.r =  await this.findOne() //STORED IT IN THIS.R SO THAT IT CAN ACCESED IN OTHER SCHEMA METHODS AS WELL
-  console.log(this.r)           
+  // console.log(this.r)           
          
   next()
  

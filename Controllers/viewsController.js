@@ -21,11 +21,10 @@ exports.getOverview = catchAsync(async (request, response) => {
 //   })
 // })
 exports.getTourById = catchAsync(async (request, response) => {
-  const tour = await Tour.findById(request.params.tourId).populate({
-    path: 'reviews',
-    fields: 'review rating user'
+  const tour = await Tour.findOne({_id : request.params.tourId}).populate({
+    path: 'review',
   })
-  console.log(tour.review)
+  console.log(tour)
   response.status(200).render('tour', {
     title: tour.name,
     tour

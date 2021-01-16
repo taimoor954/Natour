@@ -46,7 +46,7 @@ var tourSchema = new mongoose.Schema({
     type: Number,
     min: [1, 'somee issue with min'],
     max: [5, 'somee issue with max'],
-    set: val => Math.round(val*10/10) //round will give int so 4.6 will be round to 4,7 therfore 4.6*10 i.e 46 then 46/10 i.e 4.6 
+    set: val => Math.round(val * 10 / 10) //round will give int so 4.6 will be round to 4,7 therfore 4.6*10 i.e 46 then 46/10 i.e 4.6 
   },
   ratingQuantity: {
     type: Number,
@@ -123,8 +123,7 @@ var tourSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-}, 
-{
+}, {
   toJSON: {
     virtuals: true,
   },
@@ -135,11 +134,18 @@ var tourSchema = new mongoose.Schema({
 });
 
 // tourSchema.index({price : 1}) // SINGLE INDEXING BELOW ONE IS COMPUND INDEX
-tourSchema.index({slug : 1}) 
-tourSchema.index({price : 1, ratingAverage : -1}) //INDEX ARE USE TO QUERY FASTER IDS ARE BY DEFAULT INDEXED BUT AESI FIELDS
+tourSchema.index({
+  slug: 1
+})
+tourSchema.index({
+  price: 1,
+  ratingAverage: -1
+}) //INDEX ARE USE TO QUERY FASTER IDS ARE BY DEFAULT INDEXED BUT AESI FIELDS
 //JINKAY BASIS PER QUERY HOSAKTI HAI WO JALD SAY JALD WORK KARNI CHAIYA LIKE PRICE AND FOR THAT WE USE INDEX FUNC
 //1 MEANS ASCEDNING CAN ALSO USE -1 FOR DESCENDING
-tourSchema.index({startLocation : '2dsphere'})
+tourSchema.index({
+  startLocation: '2dsphere'
+})
 
 //RESPONSIBLE FOR PERFORMING EMBEDDING 
 // tourSchema.pre('save', async function (next) { //middleware to retrive user document by help of id 
@@ -158,10 +164,10 @@ tourSchema.index({startLocation : '2dsphere'})
 //FOREIGN FIELD FOREIGN MODEL REVIEW KI FIELD TOUR KO REFER KARI HAI
 //AND LOCAL FIED TOUR MODEL KAY ID KO REFER KARI HAI
 //FORIEGN AND LOCAL KAY THRU YE DONU MODEL CONNECT HOYE HEN
-tourSchema.virtual('review', {  //virtual field, and an object for virrual populate
-  ref : 'reviews' , //pointng at Model
-  foreignField : 'tour',
-  localField : '_id'
+tourSchema.virtual('review', { //virtual field, and an object for virrual populate
+  ref: 'reviews', //pointng at Model
+  foreignField: 'tour',
+  localField: '_id'
 })
 
 //lecture 23 sec 8
@@ -178,12 +184,14 @@ tourSchema.virtual('durationWeek').get(function () {
 //pre and post ye 2 hooks hotay hen
 //pre save or create say pehlay chalay ga
 
-tourSchema.pre('save', function(next) //'save' is hook pre hook
-{
-  //here this will target the schema properries
-this.slug = slugify(this.name, {lower : true})
-next()
-})
+tourSchema.pre('save', function (next) //'save' is hook pre hook
+  {
+    //here this will target the schema properries
+    this.slug = slugify(this.name, {
+      lower: true
+    })
+    next()
+  })
 // //POST save or create KAY BAD  chalay ga
 
 // tourSchema.post('save', function(doc, next) //saave here is post hook
@@ -197,17 +205,21 @@ next()
 // ********QUERIES-MIDDLEWARE**************
 //ALLOW middleware to run before and after quiery
 // pre
-tourSchema.pre(/^find/, function(next){
-  this.find({secretTour : {$ne : true}})
+tourSchema.pre(/^find/, function (next) {
+  this.find({
+    secretTour: {
+      $ne: true
+    }
+  })
   //here this points the object of queries like find, insertMany, update , delete
   this.start = Date.now()
   console.log(`${this.start*1}ms`)
   next()
 })
-tourSchema.pre(/^find/, function(next){
+tourSchema.pre(/^find/, function (next) {
   this.populate({
-    path  : 'guides', //path tells which field to include
-    select  : '-__v -passwordChangedAt -passwordResetToken ' //wont be showed when displaying
+    path: 'guides review', //path tells which field to include
+    select: '-__v -passwordChangedAt -passwordResetToken ' //wont be showed when displaying
   })
   next()
 })
