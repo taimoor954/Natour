@@ -20,13 +20,18 @@ exports.getOverview = catchAsync(async (request, response) => {
 //     title: 'The Forest Hiker Tour'
 //   })
 // })
-exports.getTourById = catchAsync(async (request, response) => {
+exports.getTourById = catchAsync(async (request, response, next) => {
   const tour = await Tour.findOne({_id : request.params.tourId}).populate({
     path: 'review',
   })
-  console.log(tour)
   response.status(200).render('tour', {
     title: tour.name,
     tour
   })
 })
+
+exports.loginUI = (request, response)=> {
+response.status(200).render('login', {
+  title : 'Log into your account'
+})
+}

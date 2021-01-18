@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
+const cors = require('cors')
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const reviewRouter = require('./Routes/reviewsRoute');
@@ -22,13 +23,16 @@ app.set('views', path.join(__dirname, 'View'))
 
 
 //GLOBAL MIDDLEWARES
+app.use(cors())
 app.use(express.static(`${__dirname}/public`)); //for static file parameter take address of that static file
 
-app.use(helmet()); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
+app.use(helmet({
+  contentSecurityPolicy: false
+})); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
 dotenv.config({
   path: `${__dirname}/config.env`,
 });
-console.log(process.env.NODE_ENV );
+console.log(process.env.NODE_ENV);
 
 if (process.env.NODE_ENV == 'development') {
   app.use(morgan('dev'));
@@ -72,6 +76,12 @@ app.use(
 //   console.log('HELLO FROM THE 1ST MIDDLEWARE');
 //   next();
 // })
+
+// app.use(function(req, res, next) { 
+//   res.setHeader( 'Content-Security-Policy', "script-src 'self' api.mapbox.com"); 
+//   return next(); 
+// });
+
 //TEST MIDDLEWARE
 app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE
