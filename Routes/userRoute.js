@@ -20,10 +20,11 @@ const {
   updatePassword,
   protectRouteMiddleware,
   restrictUser,
+  tester
 } = require('../Controllers/authenticationController');
 
 router.post('/signup', signup);
-router.post('/login', login);
+router.post('/login',login);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:randomToken', resetPassword);
 //PROTECT ALL ROUTES AFTER THIS MIDDLEWARE

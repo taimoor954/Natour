@@ -12,23 +12,54 @@ const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const reviewRouter = require('./Routes/reviewsRoute');
 const viewRouter = require('./Routes/viewRoutes');
+const cookie_parser = require('cookie-parser')
 const {
   AppError
 } = require('./utils/Error');
 const globalErrorHandeler = require('./Controllers/errorController');
+const { request, response } = require('express');
+
+
 // console.log(xss())
 const app = express();
+app.use(helmet({
+  contentSecurityPolicy: false
+})); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
+var corsOptions = {
+  origin: 'http://localhost:8000',
+  credentials: true,
+};
+app.use(cookie_parser())
+app.use(cors(corsOptions)); //FOR ENABLING CORS POLIY
+
+// app.use((request, response, next) => {
+//   console.log(JSON.stringify(request.cookies))
+//   next()
+// }) 
+
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'Origin,X-Requested-With,content-type,set-cookie');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
+
 app.set('view engine', 'pug') //thats how we set template engine in express
 app.set('views', path.join(__dirname, 'View'))
 
 
 //GLOBAL MIDDLEWARES
-app.use(cors())
+
 app.use(express.static(`${__dirname}/public`)); //for static file parameter take address of that static file
 
-app.use(helmet({
-  contentSecurityPolicy: false
-})); //SECURITY GLOBAL MIDDLEWARE THAT SET SECUTIRTY HTTP
 dotenv.config({
   path: `${__dirname}/config.env`,
 });
@@ -48,7 +79,7 @@ app.use(
     limit: '10kb', //size of req.body can be upto 10kb
   })
 ); //BODY PARSER
-
+// app.use(cookie_parser())
 //data sanitization against noSql query injection and cross site scripting attack also called XXS
 // {"email" : {"$gt" : "" }} consider this query. mongoSanitize will remove query operators like $
 app.use(mongoSanitize());
@@ -69,27 +100,17 @@ app.use(
     ],
   })
 );
-//TODO:
-// app.use((request, response, next) => {
-//   //CREATING CUSTOM MIDDLEWARE
-//   console.log(request.protocol);
-//   console.log('HELLO FROM THE 1ST MIDDLEWARE');
-//   next();
-// })
-
-// app.use(function(req, res, next) { 
-//   res.setHeader( 'Content-Security-Policy', "script-src 'self' api.mapbox.com"); 
-//   return next(); 
-// });
 
 //TEST MIDDLEWARE
 app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE
   request.requestTime = new Date().toISOString();
   console.log(request.requestTime);
-  // console.log(request.headers)
+  console.log(`${JSON.stringify(request.cookies)} HAHAHYOYO`)
   next();
 });
+
+
 
 app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE

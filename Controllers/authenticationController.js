@@ -26,8 +26,23 @@ const {
   nextTick
 } = require('process');
 
-const createSendToken = (user, statusCode, response) => { //for login and sending token 
+
+const createSendToken = (user, statusCode, response) => {
+  //for login and sending token
   const token = tokenGenerator(user._id);
+ 
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.COOKIE_EXPIRY_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  // console.log(cookieOptions)
+
+  response.cookie('jwt', token, cookieOptions);
+  console.log('Cookie has been set in browser')
+  if (process.env.NODE_ENV == 'production') cookieOptions.secure = true;
+  user.password = undefined;
   response.status(statusCode).json({
     status: 'success',
     token,
@@ -35,7 +50,10 @@ const createSendToken = (user, statusCode, response) => { //for login and sendin
       user,
     },
   });
+  // console.log(response.getHeaders())
+
 };
+
 
 exports.signup = catchAsync(async (request, response, next) => {
   // const newUser = await User.create(request.body);
@@ -49,7 +67,6 @@ exports.signup = catchAsync(async (request, response, next) => {
     role: request.body.role,
     password: request.body.password,
     passwordConfirm: request.body.passwordConfirm,
-    
   });
   //payload, secretString, optinal callback m optional call back tells when jwt should expire
   createSendToken(newUser, 201, response);
