@@ -36,11 +36,13 @@ const createSendToken = (user, statusCode, response) => {
       Date.now() + process.env.COOKIE_EXPIRY_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    path : '/',
+
   };
   // console.log(cookieOptions)
 
   response.cookie('jwt', token, cookieOptions);
-  console.log('Cookie has been set in browser')
+  // console.log('Cookie has been set in browser')
   if (process.env.NODE_ENV == 'production') cookieOptions.secure = true;
   user.password = undefined;
   response.status(statusCode).json({

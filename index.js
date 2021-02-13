@@ -106,7 +106,8 @@ app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE
   request.requestTime = new Date().toISOString();
   console.log(request.requestTime);
-  console.log(`${JSON.stringify(request.cookies)} HAHAHYOYO`)
+  console.log(`${JSON.stringify(request.cookies)} YOUR COOKIE`)
+  
   next();
 });
 
@@ -115,7 +116,7 @@ app.use((request, response, next) => {
 app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE
   console.log('HELLO FROM THE 1st MIDDLEWARE');
-  // console.log(object)
+  // console.log(response.header())
 
   next();
 });
