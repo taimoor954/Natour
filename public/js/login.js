@@ -16,10 +16,15 @@ const login = async (email, password) => {
       withCredentials: true,
       
     });
-
-    console.log(result);
+    if (result.data.status = 'success')
+    {
+      alert('Logged in succesfully')
+      window.setTimeout(()=> {
+        location.assign('/')
+      }, 1000)
+    }
   } catch (error) {
-    console.log(error.response.data);
+    alert(error.response.data.message);
   }
 };
 

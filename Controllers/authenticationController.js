@@ -26,18 +26,16 @@ const {
   nextTick
 } = require('process');
 
-
 const createSendToken = (user, statusCode, response) => {
   //for login and sending token
   const token = tokenGenerator(user._id);
- 
+
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.COOKIE_EXPIRY_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    path : '/',
-
+    path: '/',
   };
   // console.log(cookieOptions)
 
@@ -53,15 +51,14 @@ const createSendToken = (user, statusCode, response) => {
     },
   });
   // console.log(response.getHeaders())
-
 };
-
 
 exports.signup = catchAsync(async (request, response, next) => {
   // const newUser = await User.create(request.body);
   //change due to security flaw because anyone can  register as admin here although he's not
   //so we changed below so we allow them fields that we want noting else
   // ager kiisi ko admin banan hai then go to his doc in mongo and add admin field manualy
+
   const newUser = await User.create({
     name: request.body.name,
     email: request.body.email,
@@ -106,7 +103,7 @@ exports.login = catchAsync(async (request, response, next) => {
 
   // const correct = await user.correctPassword(password, user.password)
   if (!user || !(await user.correctPassword(user.password, password))) {
-    return next(new AppError('Incorrect email and pass', 401)); //401 means unauthorize
+    return next(new AppError('Incorrect email or pass', 401)); //401 means unauthorize
   }
   createSendToken(user, 200, response);
 });
@@ -125,6 +122,8 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
     request.headers.authorization.startsWith('Bearer')
   ) {
     token = request.headers.authorization.split(' ')[1]; //split and get seocnd elemet
+  } else if (request.cookies.jwt) {
+    token = request.cookies.jwt;
   }
   // console.log(token)
   if (!token) {
@@ -139,7 +138,6 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
   //OR
 
   const decodedToken = await jwt.verify(token, process.env.TOKEN_SECRET_STRING); // the above one ant this one both return promise
-  // console.log(decodedToken);
   //3Check if user still exist
   const freshUser = await User.findById(decodedToken.id);
   if (!freshUser)
@@ -158,9 +156,40 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
     );
   }
 
-  // NEXT MEANS GRANT ACCESS TO PROECTED ROUTE
+  //NEXT MEANS GRANT ACCESS TO PROECTED ROUTE
   request.user = freshUser;
   next();
+});
+
+//CHECK LOGIN HEADER OF SCREEN
+//ONLY FOR RENDERED PAGES
+//SIMILAR TO PROTECTED ROUTE 
+exports.isLoggedIn = catchAsync(async (request, response, next) => {
+  //Headers may authorization as a key aiega value may Bearer<space>JWT
+  if (request.cookies.jwt) { //IF NO COOKIE THEN NO LOGGED IN USER 
+    //1 VERRIFY TOKEN 
+    const decodedToken = await jwt.verify(
+      request.cookies.jwt,
+      process.env.TOKEN_SECRET_STRING
+    );
+    //2 CHECK IF USER STILL EXIST 
+    const freshUser = await User.findById(decodedToken.id);
+    if (!freshUser)
+      return next();
+
+    //3 check if the user changed password after the jwt was issued3
+    if (await freshUser.changePasswordAfter(decodedToken.iat)) {
+      return next();
+    }
+
+    //THERE IS A LOGGGED IN USER 
+    response.locals.user = freshUser; //RESPONSE.LOCALS WILL GIVE ACCESS OF USER VARIABLE TO EVERY TEMPLATE. THIS IS
+    //SIMILAR TO RENDERING LIKE PASSING DATA TO REDNER FUNCTION 
+    next();
+  } else {
+
+    next()
+  }
 });
 
 //tour cant be deleted by every user only admin can perform this type of operation

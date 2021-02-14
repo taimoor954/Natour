@@ -32,11 +32,6 @@ var corsOptions = {
 app.use(cookie_parser())
 app.use(cors(corsOptions)); //FOR ENABLING CORS POLIY
 
-// app.use((request, response, next) => {
-//   console.log(JSON.stringify(request.cookies))
-//   next()
-// }) 
-
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
