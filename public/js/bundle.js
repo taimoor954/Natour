@@ -8472,7 +8472,7 @@ exports.showAlert = showAlert;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.login = void 0;
+exports.logout = exports.login = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -8535,6 +8535,48 @@ var login = /*#__PURE__*/function () {
 }();
 
 exports.login = login;
+
+var logout = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var result;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            _context2.next = 3;
+            return (0, _axios.default)({
+              method: 'GET',
+              url: 'http://localhost:8000/api/v1/users/logout',
+              withCredentials: true
+            });
+
+          case 3:
+            result = _context2.sent;
+            if (result.data.status = 'success') location.reload(true);
+            _context2.next = 11;
+            break;
+
+          case 7:
+            _context2.prev = 7;
+            _context2.t0 = _context2["catch"](0);
+            console.log(_context2.t0);
+            (0, _alerts.showAlert)('error', 'Error logging out');
+
+          case 11:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[0, 7]]);
+  }));
+
+  return function logout() {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+exports.logout = logout;
 },{"axios":"../../node_modules/axios/index.js","./alerts":"alerts.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8804,7 +8846,9 @@ var _login = require("./login");
 //TO OVERCOME THOSE ERRORS FOLLWING ARE THE STEPS
 // 1 DOM ELMENET
 var mapBox = document.getElementById('map');
-var loginForm = document.querySelector('.form'); //3 DELEGATION
+var loginForm = document.querySelector('.form');
+var logoutBtn = document.querySelector('.nav__el--logout');
+console.log(logoutBtn); //3 DELEGATION
 
 if (mapBox) {
   var locations = JSON.parse(document.getElementById('map').dataset.location);
@@ -8817,6 +8861,12 @@ if (loginForm) {
     var email = document.getElementById('email').value;
     var password = document.getElementById('password').value;
     (0, _login.login)(email, password);
+  });
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', function (e) {
+    (0, _login.logout)();
   });
 } // document.querySelector('.form').addEventListener('submit', (e) => {
 //   e.preventDefault();
@@ -8854,7 +8904,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57640" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61553" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,6 +1,8 @@
 // import axios from "axios";
 import axios from 'axios';
-import {showAlert} from './alerts'
+import {
+  showAlert
+} from './alerts'
 export const login = async (email, password) => {
   try {
     const result = await axios({
@@ -13,12 +15,26 @@ export const login = async (email, password) => {
       withCredentials: true,
     });
     if ((result.data.status = 'success')) {
-      showAlert('success','Logged in succesfully');
+      showAlert('success', 'Logged in succesfully');
       window.setTimeout(() => {
         location.assign('/');
       }, 1000);
     }
   } catch (error) {
-    showAlert('error',error.response.data.message);
+    showAlert('error', error.response.data.message);
+  }
+};
+
+export const logout = async () => {
+  try {
+    const result = await axios({
+      method: 'GET',
+      url: 'http://localhost:8000/api/v1/users/logout',
+      withCredentials: true,
+    });
+    if ((result.data.status = 'success')) location.reload(true)
+  } catch (error) {
+    console.log(error)
+    showAlert('error', 'Error logging out');
   }
 };

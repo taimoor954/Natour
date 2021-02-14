@@ -1,30 +1,15 @@
 //login password changing authention logout will happen here
-const {
-  promisify
-} = require('util');
+const { promisify } = require('util');
 const crypto = require('crypto');
-const {
-  request,
-  response
-} = require('express');
+const { request, response } = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const {
-  AppError
-} = require('../utils/Error');
-const {
-  User
-} = require('../Models/userModel');
+const { AppError } = require('../utils/Error');
+const { User } = require('../Models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const {
-  decode
-} = require('punycode');
-const {
-  sendEmail
-} = require('../utils/email');
-const {
-  nextTick
-} = require('process');
+const { decode } = require('punycode');
+const { sendEmail } = require('../utils/email');
+const { nextTick } = require('process');
 
 const createSendToken = (user, statusCode, response) => {
   //for login and sending token
@@ -72,10 +57,12 @@ exports.signup = catchAsync(async (request, response, next) => {
 });
 
 function tokenGenerator(id) {
-  return jwt.sign({
+  return jwt.sign(
+    {
       id: id,
     },
-    process.env.TOKEN_SECRET_STRING, {
+    process.env.TOKEN_SECRET_STRING,
+    {
       ///token will be expiredin 90 days for securitty reasons
       expiresIn: process.env.TOKEN_EXPIRY_IN,
     }
@@ -90,10 +77,7 @@ exports.login = catchAsync(async (request, response, next) => {
   //IF EVERYTHING OKAY SEND JSON TOKEN TO CLIENT
   // console.log(process.env.TOKEN_EXPIRY_IN)
 
-  const {
-    email,
-    password
-  } = request.body;
+  const { email, password } = request.body;
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
@@ -107,6 +91,18 @@ exports.login = catchAsync(async (request, response, next) => {
   }
   createSendToken(user, 200, response);
 });
+
+//LOGGEDOUT KAY LIYE I PASSED AN INVALID TOKEN 'LOGGEDOUT' WHICH OVERWRITE THE ORIGINAL TOKEN JAB
+//INVALID TOKEN DUNGA TOU KHUD HE BANDA LOGGEDOUT HOJAYEGA
+//INVALID TOKEN 10 SEC MAY EXPIRE HOJAYEGA
+
+exports.logout = (request, response) => {
+  response.cookie('jwt', 'loggedOut', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  response.status(200).json({ status: 'succesfully loggedout' });
+};
 
 exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
   //1Get Token and check if its there
@@ -163,34 +159,42 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
 
 //CHECK LOGIN HEADER OF SCREEN
 //ONLY FOR RENDERED PAGES
-//SIMILAR TO PROTECTED ROUTE 
-exports.isLoggedIn = catchAsync(async (request, response, next) => {
-  //Headers may authorization as a key aiega value may Bearer<space>JWT
-  if (request.cookies.jwt) { //IF NO COOKIE THEN NO LOGGED IN USER 
-    //1 VERRIFY TOKEN 
-    const decodedToken = await jwt.verify(
-      request.cookies.jwt,
-      process.env.TOKEN_SECRET_STRING
-    );
-    //2 CHECK IF USER STILL EXIST 
-    const freshUser = await User.findById(decodedToken.id);
-    if (!freshUser)
-      return next();
+//SIMILAR TO PROTECTED ROUTE
 
-    //3 check if the user changed password after the jwt was issued3
-    if (await freshUser.changePasswordAfter(decodedToken.iat)) {
+//CATCH ASYNC HATA DIA ISlOGGEDIN SAY BECAUSE ERROR DISPLAY NAHI KARANA YAHA, LOCALLY ERROR HANDLE KARNA HAU
+//USING TRY CATCH IS LOGGED IN KAY ANDER AGER ERROR DISPLAY KARANA HOTA TOU CATCH ASYNC RAKHTAY
+//ALSO LOGGED OUT KAY BAAD JAB PAGE RELOAD HOGA TOU SAB SAY PEHLAY IS LOGGED IN CHALAY GA YE FUNC INVALID TOKEN KO DECODE KARAY GA TOU ERROR AIEGA TOU USKO HANDLE
+//LOCALLY KARENGAY HUM
+exports.isLoggedIn = async (request, response, next) => {
+  //Headers may authorization as a key aiega value may Bearer<space>JWT
+  if (request.cookies.jwt) {
+    //IF NO COOKIE THEN NO LOGGED IN USER
+    try {
+      //1 VERRIFY TOKEN
+      const decodedToken = await jwt.verify(
+        request.cookies.jwt,
+        process.env.TOKEN_SECRET_STRING
+      );
+      //2 CHECK IF USER STILL EXIST
+      const freshUser = await User.findById(decodedToken.id);
+      if (!freshUser) return next();
+
+      //3 check if the user changed password after the jwt was issued3
+      if (await freshUser.changePasswordAfter(decodedToken.iat)) {
+        return next();
+      }
+
+      //THERE IS A LOGGGED IN USER
+      response.locals.user = freshUser; //RESPONSE.LOCALS WILL GIVE ACCESS OF USER VARIABLE TO EVERY TEMPLATE. THIS IS
+      //SIMILAR TO RENDERING LIKE PASSING DATA TO REDNER FUNCTION
+      return next();
+    } catch (error) {
       return next();
     }
-
-    //THERE IS A LOGGGED IN USER 
-    response.locals.user = freshUser; //RESPONSE.LOCALS WILL GIVE ACCESS OF USER VARIABLE TO EVERY TEMPLATE. THIS IS
-    //SIMILAR TO RENDERING LIKE PASSING DATA TO REDNER FUNCTION 
-    next();
   } else {
-
-    next()
+    next();
   }
-});
+};
 
 //tour cant be deleted by every user only admin can perform this type of operation
 //such operatoins are called AUTHORIZATION

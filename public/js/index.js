@@ -4,7 +4,7 @@ import {
     displayMap
 } from './mapbox';
 import {
-    login
+    login, logout
 } from './login';
 
 // const locations = JSON.parse(document.getElementById('map').dataset.location); was creating some errros when we were
@@ -14,7 +14,8 @@ import {
 // 1 DOM ELMENET
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form');
-
+const logoutBtn = document.querySelector('.nav__el--logout');
+console.log(logoutBtn)
 //3 DELEGATION
 if (mapBox) {
     const locations = JSON.parse(document.getElementById('map').dataset.location);
@@ -30,6 +31,15 @@ if (loginForm) {
         login(email, password);
     })
 }
+
+if(logoutBtn)
+{
+    logoutBtn.addEventListener('click', (e)=> {
+        logout()
+    })
+}
+
+
 
 // document.querySelector('.form').addEventListener('submit', (e) => {
 //   e.preventDefault();
