@@ -32,12 +32,16 @@
     "validator": "^13.5.1",
     "xss-clean": "^0.1.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  },
   "scripts": {
     "lint": "eslint --fix --ext .js,.jsx .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js"  :  "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js"  :  "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "keywords": [],
   "author": "",
