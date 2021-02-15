@@ -1,15 +1,30 @@
 //login password changing authention logout will happen here
-const { promisify } = require('util');
+const {
+  promisify
+} = require('util');
 const crypto = require('crypto');
-const { request, response } = require('express');
+const {
+  request,
+  response
+} = require('express');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const { AppError } = require('../utils/Error');
-const { User } = require('../Models/userModel');
+const {
+  AppError
+} = require('../utils/Error');
+const {
+  User
+} = require('../Models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const { decode } = require('punycode');
-const { sendEmail } = require('../utils/email');
-const { nextTick } = require('process');
+const {
+  decode
+} = require('punycode');
+const {
+  sendEmail
+} = require('../utils/email');
+const {
+  nextTick
+} = require('process');
 
 const createSendToken = (user, statusCode, response) => {
   //for login and sending token
@@ -57,12 +72,10 @@ exports.signup = catchAsync(async (request, response, next) => {
 });
 
 function tokenGenerator(id) {
-  return jwt.sign(
-    {
+  return jwt.sign({
       id: id,
     },
-    process.env.TOKEN_SECRET_STRING,
-    {
+    process.env.TOKEN_SECRET_STRING, {
       ///token will be expiredin 90 days for securitty reasons
       expiresIn: process.env.TOKEN_EXPIRY_IN,
     }
@@ -77,7 +90,10 @@ exports.login = catchAsync(async (request, response, next) => {
   //IF EVERYTHING OKAY SEND JSON TOKEN TO CLIENT
   // console.log(process.env.TOKEN_EXPIRY_IN)
 
-  const { email, password } = request.body;
+  const {
+    email,
+    password
+  } = request.body;
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
@@ -101,7 +117,9 @@ exports.logout = (request, response) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
-  response.status(200).json({ status: 'succesfully loggedout' });
+  response.status(200).json({
+    status: 'succesfully loggedout'
+  });
 };
 
 exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
@@ -154,6 +172,7 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
 
   //NEXT MEANS GRANT ACCESS TO PROECTED ROUTE
   request.user = freshUser;
+  response.locals.user = freshUser
   next();
 });
 

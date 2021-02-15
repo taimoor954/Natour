@@ -74,6 +74,8 @@ app.use(
     limit: '10kb', //size of req.body can be upto 10kb
   })
 ); //BODY PARSER
+app.use(express.urlencoded({extended : true, limit  : '10kb'}))
+
 // app.use(cookie_parser())
 //data sanitization against noSql query injection and cross site scripting attack also called XXS
 // {"email" : {"$gt" : "" }} consider this query. mongoSanitize will remove query operators like $

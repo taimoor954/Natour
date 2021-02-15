@@ -1,6 +1,7 @@
 const {
   Tour
 } = require('../Models/tourModel')
+const { User } = require('../Models/userModel')
 const catchAsync = require('../utils/catchAsync')
 const {
   AppError
@@ -43,3 +44,27 @@ exports.loginUI = (request, response) => {
     title: 'Log into your account'
   })
 }
+
+exports.getAccount = (request, response) => {
+  response.status(200).render('accounts', {
+    title : "Your account"
+  })
+}
+
+//THIS IS INSIDE /me ROUTE when you click on ypur name 
+exports.updateUserData = catchAsync(async (request, response, next) => {
+  console.log(request.body)
+  const updatedUser = await User.findByIdAndUpdate(request.user.id, {
+    name : request.body.name, 
+    email : request.body.email,
+  },{
+    new : true, //WILL RETURN NEW AND UPDATED DOCUMENT
+    runValidators  :true //VALIDATIORS IN MODEL WILL BE USE HERE 
+  })
+  //name and email are the field of the name we set in accounts.pug form name='name'
+  //DO NOT UPDATE PASSWORD WITH FINDBYID AND UPDATE THEREFORE THEY ARE HANDELLED SEPERATELT BELOW
+  response.status(200).render('accounts', {
+    title : "Your account",
+    user : updatedUser
+  })
+})
