@@ -1,7 +1,5 @@
 const dotenv = require('dotenv').config();
-const {
-  AppError
-} = require('../utils/Error');
+const { AppError } = require('../utils/Error');
 const mongoose = require('mongoose');
 var routeNotFound = (err) => {
   var message = err.message;
@@ -22,38 +20,65 @@ var handleJWTExpityError = (err) => {
   return new AppError(' Token Expired. Please login again', 401);
 };
 
-var sendErrorDev = (err, response) => {
-  console.log(err);
-  return response.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    statusCode: err.statusCode,
-    message: err.message,
-    stack: err.stack,
-  });
-};
-var sendErrorProd = (err, response) => {
-  if (err.isOperationalError) {
+var sendErrorDev = (err, request, response) => {
+  //ERROR HANDELLING FOR JUST API
+  if (request.originalUrl.startsWith('/api')) {
     return response.status(err.statusCode).json({
       status: err.status,
+      error: err,
+      statusCode: err.statusCode,
       message: err.message,
+      stack: err.stack,
     });
   } else {
-    // 1) Log error
-    console.error('ERROR 🔥🔥', err);
-
-    // 2) Send generic message
-    return response.status(500).json({
-      status: 'error',
-      message: 'Something went very wrong!',
-      messageError: err.message,
+    //ERROR HANDELLING FOR RENDERED WEBSITE
+   return response.status(err.statusCode).render('error', {
+      title: 'Something went very wrong',
+      msg: err.message,
     });
+  }
+};
+var sendErrorProd = (err, request, response) => {
+  //ERROR HANDELLING FOR API
+  if (request.originalUrl.startsWith('/api')) {
+      //OPERATIONAL ERROR MEANS TRUSRED ERROR OR ERROR THAT WE KNOW OR WE HAVE HANDLED IN SOME WAY
+    if (err.isOperationalError) {
+      return response.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    } else {
+      // 1) Log error
+      console.error('ERROR 🔥🔥', err);
+
+      // 2) Send generic message
+      return response.status(500).json({
+        status: 'error',
+        message: 'Something went very wrong!',
+        messageError: err.message,
+      });
+    }
+  } else {
+    //ERROR HANDELLING FOR RENDERED WEBSIYE
+    if (err.isOperationalError) {
+      return response.status(err.statusCode).render('error', {
+        title: 'Something went very wrong',
+        msg: err.message,
+      });
+    } else {
+      // 1) Log error
+      console.error('ERROR 🔥🔥', err);
+      // 2) Send generic message
+      return response.status(err.statusCode).render('error', {
+        title: 'Something went very wrong',
+        msg: 'Please try again later',
+      });
+    }
   }
 };
 
 module.exports = (err, request, response, next) => {
-
-  if (err.message.includes(`route ${request.originalUrl} not found`)) {
+if (err.message.includes(`route ${request.originalUrl} not found`)) {
     return response.status(err.statusCode).json({
       statusCode: err.statusCode,
       status: err.status,
@@ -67,22 +92,21 @@ module.exports = (err, request, response, next) => {
   var error = {
     ...err,
   };
+  // error.message= err.message SHORT TRICK IF ERROR IS NOT INCLUDING MESSAGE WITH IT SELF
 
-  if (process.env.NODE_ENV == 'development') {
-    return response.status(500).json({
-      error: err,
-      message: err.message,
-      stack: err.stack,
-    });
-  }
-  if (process.env.NODE_ENV == 'production') {
-    return response.status(err.statusCode).json({
-      message: err.message,
-      status: err.status, 
-    });
-  } //extra
-
-
+  // if (process.env.NODE_ENV == 'development') {
+  //   return response.status(500).json({
+  //     error: err,
+  //     message: err.message,
+  //     stack: err.stack,
+  //   });
+  // }
+  // if (process.env.NODE_ENV == 'production') {
+  //   return response.status(err.statusCode).json({
+  //     message: err.message,
+  //     status: err.status,
+  //   });
+  // } //extra
 
   if (process.env.NODE_ENV == 'development') {
     // if (err.hasOwnProperty('kind')) {
@@ -109,7 +133,7 @@ module.exports = (err, request, response, next) => {
     //   console.log('validation errors');
     // }
 
-    return sendErrorDev(error, response);
+    return sendErrorDev(err, request, response);
   }
 
   if (process.env.NODE_ENV == 'production') {
@@ -145,7 +169,7 @@ module.exports = (err, request, response, next) => {
       error = handleJWTExpityError(err);
     }
 
-    return sendErrorProd(error, response);
+    return sendErrorProd(err, request, response);
   }
   sendErrorProd(err, response);
 };

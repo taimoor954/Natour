@@ -2,6 +2,9 @@ const {
   Tour
 } = require('../Models/tourModel')
 const catchAsync = require('../utils/catchAsync')
+const {
+  AppError
+} = require('../utils/Error')
 exports.getOverview = catchAsync(async (request, response) => {
   //GET TOUR DATA FROM COLLECTION
   const tours = await Tour.find()
@@ -21,17 +24,22 @@ exports.getOverview = catchAsync(async (request, response) => {
 //   })
 // })
 exports.getTourById = catchAsync(async (request, response, next) => {
-  const tour = await Tour.findOne({_id : request.params.tourId}).populate({
+  const tour = await Tour.findOne({
+    _id: request.params.tourId
+  }).populate({
     path: 'review',
   })
+  if (!tour) {
+    return next(new AppError('No tour found with this id', 404))
+  }
   response.status(200).render('tour', {
     title: tour.name,
     tour
   })
 })
 
-exports.loginUI = (request, response)=> {
-response.status(200).render('login', {
-  title : 'Log into your account'
-})
+exports.loginUI = (request, response) => {
+  response.status(200).render('login', {
+    title: 'Log into your account'
+  })
 }
