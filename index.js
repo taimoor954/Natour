@@ -17,7 +17,10 @@ const {
   AppError
 } = require('./utils/Error');
 const globalErrorHandeler = require('./Controllers/errorController');
-const { request, response } = require('express');
+const {
+  request,
+  response
+} = require('express');
 
 
 // console.log(xss())
@@ -74,7 +77,10 @@ app.use(
     limit: '10kb', //size of req.body can be upto 10kb
   })
 ); //BODY PARSER
-app.use(express.urlencoded({extended : true, limit  : '10kb'}))
+app.use(express.urlencoded({
+  extended: true,
+  limit: '10kb'
+}))
 
 // app.use(cookie_parser())
 //data sanitization against noSql query injection and cross site scripting attack also called XXS
@@ -103,20 +109,20 @@ app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE
   request.requestTime = new Date().toISOString();
   console.log(request.requestTime);
-  console.log(`${JSON.stringify(request.cookies)} YOUR COOKIE`)
-  
-  next();
-});
-
-
-
-app.use((request, response, next) => {
-  //CREATING CUSTOM MIDDLEWARE
-  console.log('HELLO FROM THE 1st MIDDLEWARE');
-  // console.log(response.header())
+  // console.log(`${JSON.stringify(request.cookies)} YOUR COOKIE`)
 
   next();
 });
+
+
+
+// app.use((request, response, next) => {
+//   //CREATING CUSTOM MIDDLEWARE
+//   // console.log('HELLO FROM THE 1st MIDDLEWARE');
+//   // console.log(response.header())
+
+//   next();
+// });
 
 //ROUTES FOR ROUTE HANDLER  
 app.use('/', viewRouter);

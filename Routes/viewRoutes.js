@@ -16,5 +16,6 @@ router.get('/login', isLoggedIn,loginUI)
 router.get('/', isLoggedIn, getOverview)
 router.get('/tours/:tourId',isLoggedIn, getTourById)
 router.get('/me', protectRouteMiddleware,getAccount)
-router.post('/submit-user-data', protectRouteMiddleware,updateUserData)
+//IF YOU WANNA USE FORM METHOD TO UPDATE NAME AND EMAIL USE THIS ROUTE
+// router.post('/submit-user-data', protectRouteMiddleware,updateUserData)
 module.exports = router;
