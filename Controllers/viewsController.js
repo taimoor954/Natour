@@ -53,7 +53,7 @@ exports.getAccount = (request, response) => {
 
 //THIS IS INSIDE /me ROUTE when you click on ypur name 
 exports.updateUserData = catchAsync(async (request, response, next) => {
-  console.log(request.body)
+  // console.log(request.body)
   const updatedUser = await User.findByIdAndUpdate(request.user.id, {
     name : request.body.name, 
     email : request.body.email,

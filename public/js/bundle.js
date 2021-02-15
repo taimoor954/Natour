@@ -8841,14 +8841,16 @@ var _mapbox = require("./mapbox");
 var _login = require("./login");
 
 //help so that old browser can work with new js features
+// import {updateNameAndEmail} from './updateSettings'
+// import { updateNameAndEmail } from './updateSettings';
 // const locations = JSON.parse(document.getElementById('map').dataset.location); was creating some errros when we were
 //runnning mapbox on pages other than tour detail jaha per mapbox ka kaam hai
 //TO OVERCOME THOSE ERRORS FOLLWING ARE THE STEPS
 // 1 DOM ELMENET
 var mapBox = document.getElementById('map');
 var loginForm = document.querySelector('.form--login');
-var logoutBtn = document.querySelector('.nav__el--logout');
-console.log(logoutBtn); //3 DELEGATION
+var logoutBtn = document.querySelector('.nav__el--logout'); // const updateUserDataAndEmail = document.querySelector('.form-user-data');
+//3 DELEGATION
 
 if (mapBox) {
   var locations = JSON.parse(document.getElementById('map').dataset.location);
@@ -8868,7 +8870,17 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', function (e) {
     (0, _login.logout)();
   });
-} // document.querySelector('.form').addEventListener('submit', (e) => {
+} // if(updateUserDataAndEmail)
+// {
+//     updateUserDataAndEmail.addEventListener('click', (e)=> {
+//         e.preventDefault()
+//         console.log('UWUWUWUWUWU')
+//         const email = document.getElementById('email').value;
+//         const name = document.getElementById('name').value;
+//         updateNameAndEmail(name, email)
+//     })
+// }
+// document.querySelector('.form').addEventListener('submit', (e) => {
 //   e.preventDefault();
 // //   const email = document.getElementById('email').value;
 // //   const password = document.getElementById('password').value;

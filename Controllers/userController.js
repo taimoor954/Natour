@@ -47,6 +47,7 @@ exports.updateMe = catchAsync(async (request, response, next) => {
       runValidators: true
     }
   );
+  // response.locals.user = updatedUser
   response.status(200).json({
     status: 'success',
     data: {

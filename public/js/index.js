@@ -6,7 +6,9 @@ import {
 import {
     login, logout
 } from './login';
+// import {updateNameAndEmail} from './updateSettings'
 
+// import { updateNameAndEmail } from './updateSettings';
 // const locations = JSON.parse(document.getElementById('map').dataset.location); was creating some errros when we were
 //runnning mapbox on pages other than tour detail jaha per mapbox ka kaam hai
 //TO OVERCOME THOSE ERRORS FOLLWING ARE THE STEPS
@@ -15,7 +17,8 @@ import {
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
-console.log(logoutBtn)
+// const updateUserDataAndEmail = document.querySelector('.form-user-data');
+
 //3 DELEGATION
 if (mapBox) {
     const locations = JSON.parse(document.getElementById('map').dataset.location);
@@ -39,6 +42,17 @@ if(logoutBtn)
     })
 }
 
+// if(updateUserDataAndEmail)
+// {
+//     updateUserDataAndEmail.addEventListener('click', (e)=> {
+//         e.preventDefault()
+//         console.log('UWUWUWUWUWU')
+//         const email = document.getElementById('email').value;
+//         const name = document.getElementById('name').value;
+
+//         updateNameAndEmail(name, email)
+//     })
+// }
 
 
 // document.querySelector('.form').addEventListener('submit', (e) => {

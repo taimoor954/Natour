@@ -37,7 +37,7 @@ router.use(protectRouteMiddleware); //ab neechay kay saray routes protected hen 
 
 router.patch('/updatepassword', updatePassword);
 
-router.patch('/updateme', updateMe);
+router.patch('/updateme',protectRouteMiddleware, updateMe);
 router.delete('/deleteme', deleteme); //for deactivation not deletion from mongo
 router.get('/me', getUserId, getMe);
 
