@@ -8621,16 +8621,15 @@ var updateSettings = /*#__PURE__*/function () {
               (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " Updated succesfully!!!"));
             }
 
-            _context.next = 12;
+            _context.next = 11;
             break;
 
           case 8:
             _context.prev = 8;
             _context.t0 = _context["catch"](0);
-            console.log(_context.t0);
             (0, _alerts.showAlert)('error', _context.t0.response.data.message);
 
-          case 12:
+          case 11:
           case "end":
             return _context.stop();
         }
@@ -8965,22 +8964,24 @@ if (updatePasswordAndConfirmPass) {
           switch (_context.prev = _context.next) {
             case 0:
               e.preventDefault();
+              document.querySelector('.btn--save-password').textContent = 'Updating....';
               passwordCurrent = document.getElementById('password-current').value;
               password = document.getElementById('password').value;
               passwordConfirm = document.getElementById('password-confirm').value;
-              _context.next = 6;
+              _context.next = 7;
               return (0, _updateSettings.updateSettings)({
                 passwordCurrent: passwordCurrent,
                 password: password,
                 passwordConfirm: passwordConfirm
               }, 'password');
 
-            case 6:
+            case 7:
               document.getElementById('password-current').value = "";
               document.getElementById('password').value = "";
               document.getElementById('password-confirm').value = "";
+              document.querySelector('.btn--save-password').textContent = 'Save Password';
 
-            case 9:
+            case 11:
             case "end":
               return _context.stop();
           }
