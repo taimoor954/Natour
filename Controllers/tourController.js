@@ -1,3 +1,5 @@
+const multer = require('multer')
+const sharp = require('sharp') //for image processing in node like resizing 
 const {
   Tour
 } = require('../Models/tourModel');
@@ -20,6 +22,59 @@ const {
   getOneFactoryById,
   getAllFactory,
 } = require('./handlerFactory');
+//STROE IN MEMORY SO THAT CAN BE RESIZE FROM MEMORY 
+const multerStorage = multer.memoryStorage() //this way image wil be saved as buffer 
+
+//SECOND
+const multerFilter = (request, file, cb) => { //to check if uploaded file is img of not then pass an error
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true) //first arg no error null if image is true and and second arg true 
+  } else {
+    cb(new AppError('Not an image! PLease upload an image ', 400), false)
+  }
+}
+
+//THIRD
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+
+}) //picture uploaded will be stored in directory publib/img/user
+
+//MIDDLEWARE FOR PROCESSING IMAGES FROM FORM
+exports.uploadTourImages = upload.fields([ //if image cover 1 or images 3 yani mix hai tou fields
+  {name : "imageCover", maxCount : 1}, //array will be resturn
+  {name : "images", maxCount : 3},
+]) //req.files
+
+exports.resizeTourImages = catchAsync(async(request, response, next) => {
+  // console.log(request.files)
+  if(!request.files.imageCover || !request.files.images ) return next()
+
+  //Cover image 
+  request.body.imageCover = `tour-${request.params.id}-${Date.now()}-cover.jpeg`
+  await sharp(request.files.imageCover[0].buffer).resize(2000, 1333).toFormat('jpeg').jpeg({
+    quality: 90
+  }).toFile(`public/img/tours/${ request.body.imageCover}`)
+
+  //images
+  request.body.images = [] // for updating name in mongo
+   await Promise.all( request.files.images.map( async (file, i ) =>
+  {
+    const filename = `tour-${request.params.id}-${Date.now()}-${i+1}.jpeg`
+    await sharp(file.buffer).resize(2000, 1333).toFormat('jpeg').jpeg({
+      quality: 90
+    }).toFile(`public/img/tours/${filename}`)
+    request.body.images.push(filename)
+    
+  }
+    )
+   )
+  next()
+})
+
+// upload.array('images', 5) //if only images has to be set then this  req.files
+// upload.single('images') //if only  1 images has to be set then this  req.file
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 // );

@@ -11,6 +11,8 @@ const {
   monthlyPlan,
   tourWithin,
   getDistancesFromCertainPoint,
+  uploadTourImages,
+  resizeTourImages,
 } = require('../Controllers/tourController');
 const {
   protectRouteMiddleware,
@@ -44,6 +46,8 @@ router
   .patch(
     protectRouteMiddleware,
     restrictUser('admin', 'lead-guide'),
+    uploadTourImages,
+    resizeTourImages,
     updateTour
   )
   .delete(

@@ -59,18 +59,18 @@ const filterRequestBody = (obj, ...allowedFields) => {
 
 exports.getAllUsers = getAllFactory(User);
 
-exports.resizeUserImage = (request, response, next) => {
+exports.resizeUserImage = catchAsync(async (request, response, next) => {
   if (!request.file) return next() //if no image move to next middleware
 
   request.file.filename = `user-${request.user.id}--${Date.now()}.jpeg`
 
-  sharp(request.file.buffer).resize(500, 500).toFormat('jpeg').jpeg({
+  await sharp(request.file.buffer).resize(500, 500).toFormat('jpeg').jpeg({
     quality: 90
   }).toFile(`public/img/users/${request.file.filename}`)
 
   next()
 
-}
+})
 
 //update user data is always handelling seperately from update password in normal web apps
 //user if (logged in) can update his/her data
