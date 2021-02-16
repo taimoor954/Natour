@@ -3,4 +3,5 @@ config.env
 Data_Modelling
 snapshots
 txts
+.cache
 cache

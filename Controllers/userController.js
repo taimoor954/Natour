@@ -1,4 +1,5 @@
 const multer = require('multer')
+const sharp = require('sharp') //for image processing in node like resizing 
 const catchAsync = require('../utils/catchAsync');
 const {
   User
@@ -15,15 +16,19 @@ const {
 
 
 //FIRST upload an image in file system usinf diskstorage takes an object with 2 values dest and filename
-const multerStorage = multer.diskStorage({ //for storing in disk and changing name 
-  destination: (request, file, cb) => {
-    cb(null, "public/img/users")
-  },
-  filename: (request, file, cb) => {
-    const ext = file.mimetype.split('/')[1]
-    cb(null, `user-${request.user.id}--${Date.now()}.${ext}`)
-  }
-})
+// const multerStorage = multer.diskStorage({ //for storing in disk and changing name 
+//   destination: (request, file, cb) => {
+//     cb(null, "public/img/users")
+//   },
+//   filename: (request, file, cb) => {
+//     const ext = file.mimetype.split('/')[1]
+//     cb(null, `user-${request.user.id}--${Date.now()}.${ext}`)
+//   }
+// })
+
+//STROE IN MEMORY SO THAT CAN BE RESIZE FROM MEMORY 
+const multerStorage = multer.memoryStorage() //this way image wil be saved as buffer 
+
 //SECOND
 const multerFilter = (request, file, cb) => { //to check if uploaded file is img of not then pass an error
   if (file.mimetype.startsWith('image')) {
@@ -54,6 +59,19 @@ const filterRequestBody = (obj, ...allowedFields) => {
 
 exports.getAllUsers = getAllFactory(User);
 
+exports.resizeUserImage = (request, response, next) => {
+  if (!request.file) return next() //if no image move to next middleware
+
+  request.file.filename = `user-${request.user.id}--${Date.now()}.jpeg`
+
+  sharp(request.file.buffer).resize(500, 500).toFormat('jpeg').jpeg({
+    quality: 90
+  }).toFile(`public/img/users/${request.file.filename}`)
+
+  next()
+
+}
+
 //update user data is always handelling seperately from update password in normal web apps
 //user if (logged in) can update his/her data
 exports.updateMe = catchAsync(async (request, response, next) => {
@@ -75,7 +93,7 @@ exports.updateMe = catchAsync(async (request, response, next) => {
   //FOR THIS PURPOSE WE CREATED A FUNC CALLED FILTERREQUESTBODY
   //WHICH WILL ONLY ALLOW NAME AND EMAIL
   const filteredObj = filterRequestBody(request.body, 'name', 'email');
-  if(request.file) filteredObj.photo = request.file.filename //adding photo property to obj that is updated below *here*
+  if (request.file) filteredObj.photo = request.file.filename //adding photo property to obj that is updated below *here*
   const updatedUser = await User.findByIdAndUpdate(
     request.user.id,
     filteredObj, { ///HERE
