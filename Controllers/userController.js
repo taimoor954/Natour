@@ -1,3 +1,4 @@
+const multer = require('multer')
 const catchAsync = require('../utils/catchAsync');
 const {
   User
@@ -11,6 +12,37 @@ const {
   getOneFactoryById,
   getAllFactory,
 } = require('./handlerFactory');
+
+
+//FIRST upload an image in file system usinf diskstorage takes an object with 2 values dest and filename
+const multerStorage = multer.diskStorage({ //for storing in disk and changing name 
+  destination: (request, file, cb) => {
+    cb(null, "public/img/users")
+  },
+  filename: (request, file, cb) => {
+    const ext = file.mimetype.split('/')[1]
+    cb(null, `user-${request.user.id}--${Date.now()}.${ext}`)
+  }
+})
+//SECOND
+const multerFilter = (request, file, cb) => { //to check if uploaded file is img of not then pass an error
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true) //first arg no error null if image is true and and second arg true 
+  } else {
+    cb(new AppError('Not an image! PLease upload an image ', 400), false)
+  }
+}
+
+//THIRD
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+
+}) //picture uploaded will be stored in directory publib/img/user
+
+//FOURTH
+exports.uploadUserPhoto = upload.single('photo')
+
 
 const filterRequestBody = (obj, ...allowedFields) => {
   var filteredObject = {};

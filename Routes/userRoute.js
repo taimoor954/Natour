@@ -1,8 +1,5 @@
 const express = require('express');
-const multer = require('multer')
-const upload = multer({
-  dest: "public/img/users"
-}) //picture uploaded will be stored in directory publib/img/user
+
 const router = express.Router();
 const {
   getAllUsers,
@@ -14,6 +11,7 @@ const {
   deleteme,
   getUserId,
   getMe,
+  uploadUserPhoto,
 } = require('../Controllers/userController');
 const {
   signup,
@@ -40,7 +38,7 @@ router.use(protectRouteMiddleware); //ab neechay kay saray routes protected hen 
 
 router.patch('/updatepassword', updatePassword);
 
-router.patch('/updateme', upload.single('photo'), updateMe);
+router.patch('/updateme', uploadUserPhoto, updateMe);
 router.delete('/deleteme', deleteme); //for deactivation not deletion from mongo
 router.get('/me', getUserId, getMe);
 
