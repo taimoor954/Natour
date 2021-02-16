@@ -25,6 +25,9 @@ exports.getAllUsers = getAllFactory(User);
 //update user data is always handelling seperately from update password in normal web apps
 //user if (logged in) can update his/her data
 exports.updateMe = catchAsync(async (request, response, next) => {
+  console.log(request.file)
+  console.log(request.body)
+
   // 1) CREATE ERROR IF USER TRIES TO UPDATE PASSWORD
   if (request.body.password || request.body.passwordConfim) {
     return next(

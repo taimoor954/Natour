@@ -1,5 +1,8 @@
 const express = require('express');
-
+const multer = require('multer')
+const upload = multer({
+  dest: "public/img/users"
+}) //picture uploaded will be stored in directory publib/img/user
 const router = express.Router();
 const {
   getAllUsers,
@@ -25,19 +28,19 @@ const {
 } = require('../Controllers/authenticationController');
 
 router.post('/signup', signup);
-router.post('/login',login);
-router.get('/logout',logout);
+router.post('/login', login);
+router.get('/logout', logout);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:randomToken', resetPassword);
 //PROTECT ALL ROUTES AFTER THIS MIDDLEWARE
 router.use(protectRouteMiddleware); //ab neechay kay saray routes protected hen as middleware sequence say chaltay hen
 //also ab humay router.patch('/updatepassword', protectRouteMiddleware, updatePassword); alag say protected middleware like thus
 //likhnay ki need nahi haiprotectRouteMiddleware
- 
+
 
 router.patch('/updatepassword', updatePassword);
 
-router.patch('/updateme',protectRouteMiddleware, updateMe);
+router.patch('/updateme', upload.single('photo'), updateMe);
 router.delete('/deleteme', deleteme); //for deactivation not deletion from mongo
 router.get('/me', getUserId, getMe);
 
