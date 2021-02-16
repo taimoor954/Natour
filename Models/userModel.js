@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
+    default: 'default.jpg'
   },
   role: {
     type: String,
@@ -62,10 +63,12 @@ const userSchema = new mongoose.Schema({
 //find those users whos acetive property is true
 userSchema.pre(/^find/, function (next) {
   this.find({
-    active: {$ne : false}
+    active: {
+      $ne: false
+    }
   })
   next()
-}) 
+})
 
 
 //hash pass before saving doc

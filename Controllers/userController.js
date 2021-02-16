@@ -57,8 +57,8 @@ exports.getAllUsers = getAllFactory(User);
 //update user data is always handelling seperately from update password in normal web apps
 //user if (logged in) can update his/her data
 exports.updateMe = catchAsync(async (request, response, next) => {
-  console.log(request.file)
-  console.log(request.body)
+  // console.log(request.file)
+  // console.log(request.body)
 
   // 1) CREATE ERROR IF USER TRIES TO UPDATE PASSWORD
   if (request.body.password || request.body.passwordConfim) {
@@ -75,9 +75,10 @@ exports.updateMe = catchAsync(async (request, response, next) => {
   //FOR THIS PURPOSE WE CREATED A FUNC CALLED FILTERREQUESTBODY
   //WHICH WILL ONLY ALLOW NAME AND EMAIL
   const filteredObj = filterRequestBody(request.body, 'name', 'email');
+  if(request.file) filteredObj.photo = request.file.filename //adding photo property to obj that is updated below *here*
   const updatedUser = await User.findByIdAndUpdate(
     request.user.id,
-    filteredObj, {
+    filteredObj, { ///HERE
       new: true,
       runValidators: true
     }
