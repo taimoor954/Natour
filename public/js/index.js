@@ -47,12 +47,19 @@ if (logoutBtn) {
 if (updateUserDataAndEmail) {
     updateUserDataAndEmail.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
-        const name = document.getElementById('name').value;
-        updateSettings({
-            email,
-            name
-        }, 'data');
+        //WE ARE SENDING IMAGE AS WELL SO AB YE MULTIPART DATA BAN GYA HAI
+        //TO SEND MULTI PART DATA WE CREATE FORM FROM FROM CLASS
+        //FORM KAY THROUGH SARA KA SARA DATA SEND KARDENGGAT ALONG WITH NAME AND EMAIL
+        const form= new FormData()
+        form.append('name', document.getElementById('name').value )
+        form.append('email', document.getElementById('email').value )
+        form.append('photo', document.getElementById('photo').files[0] )
+        console.log(form)
+        // const email = document.getElementById('email').value;
+        // const name = document.getElementById('name').value;
+        updateSettings(
+           form
+        , 'data');
     });
 }
 if (updatePasswordAndConfirmPass) {

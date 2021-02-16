@@ -8945,13 +8945,18 @@ if (logoutBtn) {
 
 if (updateUserDataAndEmail) {
   updateUserDataAndEmail.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var email = document.getElementById('email').value;
-    var name = document.getElementById('name').value;
-    (0, _updateSettings.updateSettings)({
-      email: email,
-      name: name
-    }, 'data');
+    e.preventDefault(); //WE ARE SENDING IMAGE AS WELL SO AB YE MULTIPART DATA BAN GYA HAI
+    //TO SEND MULTI PART DATA WE CREATE FORM FROM FROM CLASS
+    //FORM KAY THROUGH SARA KA SARA DATA SEND KARDENGGAT ALONG WITH NAME AND EMAIL
+
+    var form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    console.log(form); // const email = document.getElementById('email').value;
+    // const name = document.getElementById('name').value;
+
+    (0, _updateSettings.updateSettings)(form, 'data');
   });
 }
 
