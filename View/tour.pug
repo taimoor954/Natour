@@ -4,6 +4,8 @@ include reviewCard
 block append head
   script('self' 'unsafe-inline' 'unsafe-eval' src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js')
   link(href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet') 
+  //- script(src="https://js.stripe.com/v3/")
+
 
   //it will append after head in base
 
@@ -91,4 +93,7 @@ block content
       .cta__content
         h2.heading-secondary What are you waiting for?
         p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
-        button.btn.btn--green.span-all-rows Book tour now!
+        if user
+          button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+        else 
+          a.button.btn.btn--green.span-all-rows(href='/login') Login to book tour
