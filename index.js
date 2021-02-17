@@ -11,6 +11,7 @@ const cors = require('cors')
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const reviewRouter = require('./Routes/reviewsRoute');
+const bookingRouter = require('./Routes/bookingRoute');
 const viewRouter = require('./Routes/viewRoutes');
 const cookie_parser = require('cookie-parser')
 const {
@@ -129,6 +130,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/booking', bookingRouter);
 
 //OPREATIONAL ERROR
 //.all means for get post patch delete everything and
