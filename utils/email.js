@@ -61,6 +61,10 @@ exports.Email = class Email {
     await this.send('welcome', 'Welcome to the tour family')
 
   }
+  async sendPasswordReset() {
+    await this.send('passwordReset', ' Your Password reset token valid for 10 mins only')
+
+  }
 
 }
 
