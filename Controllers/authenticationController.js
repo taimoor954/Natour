@@ -20,7 +20,7 @@ const {
   decode
 } = require('punycode');
 const {
-  sendEmail
+  Email
 } = require('../utils/email');
 const {
   nextTick
@@ -67,6 +67,9 @@ exports.signup = catchAsync(async (request, response, next) => {
     password: request.body.password,
     passwordConfirm: request.body.passwordConfirm,
   });
+  const url = `${request.protocol}://${request.get('host')}/me`
+  console.log(url)
+  await new Email(newUser, url).sendWelcome()
   //payload, secretString, optinal callback m optional call back tells when jwt should expire
   createSendToken(newUser, 201, response);
 });
@@ -173,6 +176,7 @@ exports.protectRouteMiddleware = catchAsync(async (request, response, next) => {
   //NEXT MEANS GRANT ACCESS TO PROECTED ROUTE
   request.user = freshUser;
   response.locals.user = freshUser
+
   next();
 });
 
@@ -263,11 +267,11 @@ exports.forgotPassword = catchAsync(async (request, response, next) => {
   const message = `Forgot your password? Submit a patch request with your new password
   and password confirm to : ${resetUrl}.\n if you know the pass then ignore the email`;
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 mins)',
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: 'Your password reset token (valid for 10 mins)',
+    //   message,
+    // });
     return response.status(200).json({
       status: 200,
       message: 'token send to mail',
