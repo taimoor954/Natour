@@ -21,7 +21,16 @@ exports.Email = class Email {
   newTransport() {
     //sendGrid for production
     if (process.env.NODE_ENV == 'production') {
-      return 1
+      return nodemailer.createTransport({
+        service: 'SendGrid',
+        auth: {
+          user: process.env.SEND_GRID_USERNAME,
+          pass: process.env.SEND_GRID_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      })
     }
     //mailbox for development
     return nodemailer.createTransport({
@@ -33,7 +42,8 @@ exports.Email = class Email {
         //authentication
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
-      },
+      }
+
     });
   }
   async send(template, subject) //send the mail depening upon the subject
