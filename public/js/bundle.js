@@ -8661,7 +8661,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var stripe = Stripe("pk_test_51ILribAZGLpkmEmRMjc6i82cyU9Y9rHT5r5JAy3XOmSUxP8lOK0KsVbnq1fISOXmQnXurCX8xS9S3nEFisABPYvl00RNy5Am3e");
+var stripe = Stripe('pk_test_51ILribAZGLpkmEmRMjc6i82cyU9Y9rHT5r5JAy3XOmSUxP8lOK0KsVbnq1fISOXmQnXurCX8xS9S3nEFisABPYvl00RNy5Am3e');
 
 var bookTour = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(tourId) {
@@ -8682,15 +8682,16 @@ var bookTour = /*#__PURE__*/function () {
             });
 
           case 6:
-            _context.next = 11;
+            _context.next = 12;
             break;
 
           case 8:
             _context.prev = 8;
             _context.t0 = _context["catch"](0);
-            (0, _alerts.showAlert)("error", _context.t0);
+            console.log(_context.t0);
+            (0, _alerts.showAlert)('error', _context.t0);
 
-          case 11:
+          case 12:
           case "end":
             return _context.stop();
         }
@@ -8976,11 +8977,10 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 // 
-var locations = JSON.parse(document.getElementById('map').dataset.location); // was creating some errros when we were
+// const locations = JSON.parse(document.getElementById('map').dataset.location); // was creating some errros when we were
 //runnning mapbox on pages other than tour detail jaha per mapbox ka kaam hai
 //TO OVERCOME THOSE ERRORS FOLLWING ARE THE STEPS
 // 1 DOM ELMENET
-
 var mapBox = document.getElementById('map');
 var loginForm = document.querySelector('.form--login');
 var logoutBtn = document.querySelector('.nav__el--logout');
@@ -8989,9 +8989,8 @@ var updatePasswordAndConfirmPass = document.querySelector('.form-user-password')
 var bookBtn = document.getElementById('book-tour'); //3 DELEGATION
 
 if (mapBox) {
-  var _locations = JSON.parse(document.getElementById('map').dataset.location);
-
-  (0, _mapbox.displayMap)(_locations);
+  var locations = JSON.parse(document.getElementById('map').dataset.location);
+  (0, _mapbox.displayMap)(locations);
 }
 
 if (loginForm) {
@@ -9103,7 +9102,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50220" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50110" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,12 +1,21 @@
 //INDEX.JS IS MORE FOR GETTTING DATA FROM USER INTERFACE OR FROM WEBSITE AND DELEGATING THE DATA TO USE BY OTHER MODULES LIKE MAPBOX
 import '@babel/polyfill'; //help so that old browser can work with new js features
-import { displayMap } from './mapbox';
-import { login, logout } from './login';
-import { updateSettings } from './updateSettings';
+import {
+  displayMap
+} from './mapbox';
+import {
+  login,
+  logout
+} from './login';
+import {
+  updateSettings
+} from './updateSettings';
 
-import { bookTour } from './stripe';
+import {
+  bookTour
+} from './stripe';
 // 
-const locations = JSON.parse(document.getElementById('map').dataset.location); // was creating some errros when we were
+// const locations = JSON.parse(document.getElementById('map').dataset.location); // was creating some errros when we were
 //runnning mapbox on pages other than tour detail jaha per mapbox ka kaam hai
 //TO OVERCOME THOSE ERRORS FOLLWING ARE THE STEPS
 
@@ -63,8 +72,7 @@ if (updatePasswordAndConfirmPass) {
     const passwordCurrent = document.getElementById('password-current').value;
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('password-confirm').value;
-    await updateSettings(
-      {
+    await updateSettings({
         passwordCurrent,
         password,
         passwordConfirm,
@@ -79,9 +87,11 @@ if (updatePasswordAndConfirmPass) {
 }
 if (bookBtn) {
   bookBtn.addEventListener('click', (e) => {
-      e.target.textContent = 'Processing...'
-      const {tourId} =  e.target.dataset //data-tour-id will be fetched as dataset.tourId automatically conv into tourId 
-      bookTour(tourId)
+    e.target.textContent = 'Processing...'
+    const {
+      tourId
+    } = e.target.dataset //data-tour-id will be fetched as dataset.tourId automatically conv into tourId 
+    bookTour(tourId)
   });
 }
 

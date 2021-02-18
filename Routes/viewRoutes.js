@@ -8,6 +8,7 @@ const {
   updateUserData
 } = require('../Controllers/viewsController')
 const {protectRouteMiddleware, isLoggedIn} = require('../Controllers/authenticationController')
+const {createBookingCheckoutInDB} = require('../Controllers/bookingController')
 
 const router = express.Router()
 //ROUTES FOR PUG RENDERING
