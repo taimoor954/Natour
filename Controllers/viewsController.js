@@ -1,7 +1,7 @@
-const {
-  Tour
-} = require('../Models/tourModel')
+  
 const { User } = require('../Models/userModel')
+const { Booking } = require('../Models/bookingModel')
+const { Tour } = require('../Models/tourModel')
 const catchAsync = require('../utils/catchAsync')
 const {
   AppError
@@ -51,6 +51,18 @@ exports.getAccount = (request, response) => {
   })
 }
 
+exports.getMyTours =catchAsync(async (request, response , next) => {
+  //1 find all bookings
+  const bookings = await Booking.find({user : request.user.id})
+  // find tour with return ids
+  const tourIds = bookings.map((el)=> el.tour)
+  const tours = await Tour.find({_id : {$in : tourIds}}) //select all tours in "in" array with the tour id
+  response.status(200).render("overview" , {
+    title : "Booked Tour",
+    tours
+  })
+}
+)
 
 //IF YOU WANNA USE FORM METHOD TO UPDATE NAME AND EMAIL USE THIS METHOD
 // //THIS IS INSIDE /me ROUTE when you click on ypur name 
