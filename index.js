@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const cors = require('cors')
+const compression = require('compression') //compress all text sent to client //not for images 
 const userRouter = require('./Routes/userRoute');
 const tourRouter = require('./Routes/tourRoutes');
 const reviewRouter = require('./Routes/reviewsRoute');
@@ -24,7 +25,6 @@ const {
 } = require('express');
 
 
-// console.log(xss())
 const app = express();
 app.use(helmet({
   contentSecurityPolicy: false
@@ -62,7 +62,6 @@ app.use(express.static(`${__dirname}/public`)); //for static file parameter take
 dotenv.config({
   path: `${__dirname}/config.env`,
 });
-console.log(process.env.NODE_ENV);
 
 if (process.env.NODE_ENV == 'development') {
   app.use(morgan('dev'));
@@ -104,7 +103,7 @@ app.use(
     ],
   })
 );
-
+app.use(compression())
 //TEST MIDDLEWARE
 app.use((request, response, next) => {
   //CREATING CUSTOM MIDDLEWARE

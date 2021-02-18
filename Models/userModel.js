@@ -131,9 +131,9 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
   this.passwordResetTokenExpiresAt = Date.now() + 10 * 60 * 1000; //10 mins
-  console.log(this.passwordResetToken)
-  console.log(`${resetToken} enc token`)
-  console.log(this.passwordResetTokenExpiresAt)
+  // console.log(this.passwordResetToken)
+  // console.log(`${resetToken} enc token`)
+  // console.log(this.passwordResetTokenExpiresAt)
   return resetToken; //non encrypted password will be returned to user 
   //so that he can enter the token and the enc token stored in database will be compared with it
 };

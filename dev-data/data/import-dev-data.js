@@ -40,7 +40,7 @@ const toursFromJSON = fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
 const importData = async () => {
   try {
     await Tour.create(JSON.parse(toursFromJSON))
-    console.log('data succesfully loaded')
+    'data succesfully loaded')
   } catch (e) {
     console.log(e)
   }

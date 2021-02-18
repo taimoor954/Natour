@@ -73,7 +73,7 @@ reviewSchema.statics.calculateAverageRatingForSpecTour = async function (
       },
     },
   ]);
-  console.log(stats);
+  // console.log(stats);
   if(stats.length > 0){
   await Tour.findByIdAndUpdate(tourId, {
     ratingQuantity: stats[0].nRating,
