@@ -64,6 +64,7 @@ exports.getMyTours =catchAsync(async (request, response , next) => {
 }
 )
 
+
 //IF YOU WANNA USE FORM METHOD TO UPDATE NAME AND EMAIL USE THIS METHOD
 // //THIS IS INSIDE /me ROUTE when you click on ypur name 
 // exports.updateUserData = catchAsync(async (request, response, next) => {

@@ -47,13 +47,24 @@ exports.getCheckOutSession = catchAsync(async (request, response, next) => {
   });
 });
 // TEMPROORAY FOR DEVLOPMENT AS IT IS UNSECURE EVERYONE CAN MAKE BOOKING WITHOUT EVEN PAYING
-exports.createBookingCheckoutInDB = catchAsync(async (request, response, next) => {
+exports.createBookingCheckoutInDB = catchAsync(
+  async (request, response, next) => {
     const { tour, user, price } = request.query;
     if (!tour && !user && !price) {
       return next();
-     }
-    await Booking.create({ tour,user, price,});
-   
+    }
+    await Booking.create({
+      tour,
+      user,
+      price,
+    });
+
     response.redirect(request.originalUrl.split('?')[0]); //to create new request to our root url so we will hit ${request.protocol}://${request.get('host')}/tour this route
   }
 );
+
+exports.createBooking = createFactory(Booking)
+exports.deleteBooking = deleteFactory(Booking)
+exports.updateBooking = updateFactory(Booking)
+exports.getOneBookingById = getOneFactoryById(Booking)
+exports.getAllBookings = getAllFactory(Booking)
